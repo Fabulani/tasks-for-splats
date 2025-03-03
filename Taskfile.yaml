@@ -1,8 +1,12 @@
 version: '3'
 
 includes:
-  gsplat: ./gsplat
-  hierarchical-3d-gaussians: ./hierarchical-3d-gaussians
+  gsplat: 
+    taskfile: ./gsplat/Taskfile.yaml
+    dir: ./gsplat
+  hierarchical-3d-gaussians: 
+    taskfile: ./hierarchical-3d-gaussians/Taskfile.yaml
+    dir: ./hierarchical-3d-gaussians
 
 tasks:
   init:

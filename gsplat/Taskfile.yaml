@@ -4,11 +4,10 @@ tasks:
 
   clone:
     desc: Clone gsplat
-    internal: true
     vars:
       REPO: https://github.com/nerfstudio-project/gsplat.git
-      DEST: .
-    cmd: git clone "{{.REPO}}" "{{.DEST}} --recursive"
+      DEST: ./repo
+    cmd: git clone "{{.REPO}}" "{{.DEST}}" --recursive
 
   build:
     desc: Build gsplat Docker image

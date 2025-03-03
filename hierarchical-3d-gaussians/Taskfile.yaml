@@ -4,11 +4,10 @@ tasks:
 
   clone:
     desc: Clone hierarchical-3d-gaussians
-    internal: true
     vars:
       REPO: https://github.com/graphdeco-inria/hierarchical-3d-gaussians.git
-      DEST: .
-    cmd: git clone "{{.REPO}}" "{{.DEST}} --recursive"
+      DEST: ./repo
+    cmd: git clone "{{.REPO}}" "{{.DEST}}" --recursive
 
   build:
     desc: Build hierarchical-3d-gaussians Docker image
