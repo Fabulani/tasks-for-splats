@@ -1,0 +1,31 @@
+version: '3'
+
+includes:
+  gsplat: ./gsplat
+  hierarchical-3d-gaussians: ./hierarchical-3d-gaussians
+
+tasks:
+  init:
+    desc: Clone all repositories
+    cmds:
+      - task: gsplat:clone
+      - task: hierarchical-3d-gaussians:clone
+
+  build:
+    desc: Build all Docker images
+    cmds:
+      - task: gsplat:build
+      - task: hierarchical-3d-gaussians:build
+
+  push:
+    desc: Push to Github Container Registry
+    cmds:
+      - task: gsplat:push
+      - task: hierarchical-3d-gaussians:push
+
+  pull:
+    desc: Pull all images from Github Container Registry
+    cmds:
+      - task: gsplat:pull
+      - task: hierarchical-3d-gauss:pull
+
