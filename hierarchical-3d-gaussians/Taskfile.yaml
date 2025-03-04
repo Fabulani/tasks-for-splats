@@ -1,19 +1,24 @@
 version: '3'
 
-tasks:
+vars:
+  TAG: ghcr.io/fabulani/hierarchical-3d-gaussians:latest
+  REPO_PATH: ./repo
 
+tasks:
   clone:
     desc: Clone hierarchical-3d-gaussians
     vars:
       REPO: https://github.com/graphdeco-inria/hierarchical-3d-gaussians.git
-      DEST: ./repo
-    cmd: git clone "{{.REPO}}" "{{.DEST}}" --recursive
+    cmd: git clone {{.REPO}} {{.REPO_PATH}} --recursive
 
   build:
     desc: Build hierarchical-3d-gaussians Docker image
-    internal: true
-    cmd: docker build -f docker/Dockerfile -t ghcr.io/fabulani/hierarchical-3d-gaussians:latest
+    cmd: docker build -f docker/Dockerfile -t {{.TAG}} {{.REPO_PATH}}
 
   push:
+    desc: Push hierarchical-3d-gaussians image to Github Container Registry
+    cmd: docker push {{.TAG}}
 
   pull:
+    desc: Pull hierarchical-3d-gaussians image from Github Container Registry
+    cmd: docker pull {{.TAG}}
