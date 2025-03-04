@@ -9,25 +9,25 @@ includes:
     dir: ./hierarchical-3d-gaussians
 
 tasks:
-  init:
+  clone-all:
     desc: Clone all repositories
     cmds:
       - task: gsplat:clone
       - task: hierarchical-3d-gaussians:clone
 
-  build:
+  build-all:
     desc: Build all Docker images
     cmds:
       - task: gsplat:build
       - task: hierarchical-3d-gaussians:build
 
-  push:
+  push-all:
     desc: Push to Github Container Registry
     cmds:
       - task: gsplat:push
       - task: hierarchical-3d-gaussians:push
 
-  pull:
+  pull-all:
     desc: Pull all images from Github Container Registry
     cmds:
       - task: gsplat:pull
