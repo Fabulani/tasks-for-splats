@@ -45,7 +45,8 @@ With Tasks:
 
 The container is called `hierarchical-3d-gaussians`.
 
-> [!WARNING] You must be logged in to Github Container Registry. Otherwise, build the image from scratch.
+> [!WARNING]
+> You must be logged in to Github Container Registry. Otherwise, build the image from scratch.
 
 Once inside the container, you have 3 options:
 
@@ -57,7 +58,8 @@ Once inside the container, you have 3 options:
 
 Step-by-step execution for Hierarchical 3D Gaussians, summarized from their Github readme.
 
-> [!NOTE] dataset_dir is the directory of your target dataset.
+> [!NOTE]
+> dataset_dir is the directory of your target dataset.
 
 ### Preprocessing
 
