@@ -1,5 +1,7 @@
 version: '3'
 
+dotenv: ['.env']
+
 includes:
   gsplat: 
     taskfile: ./gsplat/Taskfile.yaml
