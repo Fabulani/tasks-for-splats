@@ -1,50 +1,29 @@
-# Hierarchical 3D Gaussians -- with Docker
+# Hierarchical 3D Gaussians
 
-> [!NOTE] Clone with --recursive!
+Website: [A Hierarchical 3D Gaussian Representation for Real-Time Rendering of Very Large Datasets](https://repo-sam.inria.fr/fungraph/hierarchical-3d-gaussians/).
 
-```sh
-git clone https://github.com/Fabulani/hierarchical-3d-gaussians.git --recursive
-cd hierarchical-3d-gaussians
-```
+## Dataset
 
-> [!WARNING] You must be logged in to Github Container Registry. Otherwise, build the image from scratch.
-
----
-
-Pull image from the Github Container Registry:
-
-```sh
-docker pull ghcr.io/fabulani/hierarchical-3d-gaussians:latest
-```
-
-Start the container. **NOTE:** make sure that, inside `docker-compose.yml`, the `build` field is commented out and `image` is not.
-
-```bash
-docker compose up -d
-docker exec -it hierarchical-3d-gaussians bash
-```
-
-The dataset folder must be in the `/data` folder. Set your dataset directory with:
-
-```bash
-export DATASET_DIR=/host/data/<dataset-name>
-```
-
-If you don't have the COLMAP export, images must be stored like so: `${DATASET_DIR}/inputs/images/cam1`.
-
-If you have a COLMAP export already (`sparse` folder with `.bin` files), put it in the `${DATASET_DIR}/camera_calibration/rectified` folder.
-
-Your project folder should look like this:
+The container expects the environment variable `DATA_PATH` to contain the path to your datasets folder:
 
 ```txt
-${DATASET_DIR}
-│   # If you don't have a COLMAP export
+- <DATA_PATH>
+-- dataset_1
+-- dataset_2
+-- ...
+```
+
+The dataset structure depends on whether you already have camera calibration (COLMAP output) or not. Follow one of the options:
+
+```txt
+dataset_1
+│   # Option 1: If you don't already have camera intrinsics.
 └── inputs
 │   └── images
 │       └── cam1
 │           └── your_images.jpg/png/...
 │
-│   # If you have a COLMAP export
+│   # Option 2: If you already have camera intrinsics.
 └── camera_calibration
     └── rectified
         └── sparse
@@ -52,58 +31,75 @@ ${DATASET_DIR}
         │   ├── cameras.bin
         │   └── points3D.bin
         └── images
+           └── cam1
+               └── your_images.jpg/png/...
 ```
 
-From now on, you have a few options: execute one of the scripts with the entire workflow, or do it manually.
+## Usage
 
-- No COLMAP export workflow: `./run_all.sh`.
-- With COLMAP export ready: `./run_skip_colmap.sh`.
-- Execute manually step-by-step: follow the rest of the README.
+With Tasks:
 
-## Preprocessing
+- use `task hierarchical-3d-gaussians:pull` and `task hierarchical-3d-gaussians:run` to use Hierarchical 3D Gaussians locally.
+- use `build`, `push` tasks to update the image on Github Container Registry.
+- use `clone` only if the repository is needed for local testing.
 
-Summarised from [Preprocessing](#preprocessing).
+The container is called `hierarchical-3d-gaussians`.
 
-If **COLMAP**, put cameras, images, and points3d in `${DATASET_DIR}/camera_calibration/rectified`, then run
+> [!WARNING] You must be logged in to Github Container Registry. Otherwise, build the image from scratch.
+
+Once inside the container, you have 3 options:
+
+1. _(for datasets without camera intrinsics)_ Run the full workflow: `./run_all.sh`
+2. _(for datasets with camera intrinsics)_ Run the workflow, but skip COLMAP: `./run_skip_colmap.sh`
+3. Execute manually step-by-step: see [Step-by-step](#step-by-step).
+
+## Step-by-step
+
+Step-by-step execution for Hierarchical 3D Gaussians, summarized from their Github readme.
+
+> [!NOTE] dataset_dir is the directory of your target dataset.
+
+### Preprocessing
+
+If **COLMAP**, put cameras, images, and points3d in `<dataset_dir>/camera_calibration/rectified`, then run
 
 ```bash
-python preprocess/auto_reorient.py --input_path ${DATASET_DIR}/camera_calibration/rectified/sparse --output_path ${DATASET_DIR}/camera_calibration/aligned/sparse/0
+python preprocess/auto_reorient.py --input_path <dataset_dir>/camera_calibration/rectified/sparse --output_path <dataset_dir>/camera_calibration/aligned/sparse/0
 ```
 
 Otherwise, if **NO COLMAP**:
 
 ```bash
-python preprocess/generate_colmap.py --project_dir ${DATASET_DIR}
+python preprocess/generate_colmap.py --project_dir <dataset_dir>
 ```
 
 Generate chunks:
 
 ```bash
-python preprocess/generate_chunks.py --project_dir ${DATASET_DIR}
+# H3DG doesn't create the dir sometimes, so do it
+mkdir <dataset_dir>/camera_calibration/chunks
+
+python preprocess/generate_chunks.py --project_dir <dataset_dir>
 ```
 
 Generate monocular depth maps:
 
 ```bash
-python preprocess/generate_depth.py --project_dir ${DATASET_DIR}
+python preprocess/generate_depth.py --project_dir <dataset_dir>
 ```
 
-## Optimization
-
-Summarized from [Optimization](#optimization).
+### Optimization
 
 Train a hierarchy with
 
 ```bash
-python scripts/full_train.py --project_dir ${DATASET_DIR}
+python scripts/full_train.py --project_dir <dataset_dir>
 ```
 
-## Real-time viewer
-
-Summarized from [Real-time viewer](#real-time-viewer).
+### Real-time viewer
 
 Run the viewer. Default expected VRAM is 16 GB, which can be changed with the flag `--budget <in MB>`. This defines the scene representation budget. There will be an extra 1.5 GB VRAM for framebuffer structs.
 
 ```bash
-SIBR_viewers/install/bin/SIBR_gaussianHierarchyViewer_app --path ${DATASET_DIR}/camera_calibration/aligned --scaffold ${DATASET_DIR}/output/scaffold/point_cloud/iteration_30000 --model-path ${DATASET_DIR}/output/merged.hier --images-path ${DATASET_DIR}/camera_calibration/rectified/images
+SIBR_viewers/install/bin/SIBR_gaussianHierarchyViewer_app --path <dataset_dir>/camera_calibration/aligned --scaffold <dataset_dir>/output/scaffold/point_cloud/iteration_30000 --model-path <dataset_dir>/output/merged.hier --images-path <dataset_dir>/camera_calibration/rectified/images
 ```

@@ -9,11 +9,15 @@ tasks:
     desc: Clone hierarchical-3d-gaussians
     vars:
       REPO: https://github.com/graphdeco-inria/hierarchical-3d-gaussians.git
-    cmd: git clone {{.REPO}} {{.REPO_PATH}} --recursive
+    cmds: 
+      - git clone {{.REPO}} {{.REPO_PATH}} --recursive
+      - cp docker/run_all.sh {{.REPO_PATH}}
+      - cp docker/run_skip_colmap.sh {{.REPO_PATH}}
+      - cp docker/entrypoint.sh {{.REPO_PATH}}
 
   build:
-    desc: Build hierarchical-3d-gaussians Docker image
-    cmd: docker build -f docker/Dockerfile -t {{.TAG}} {{.REPO_PATH}}
+    desc: Build hierarchical-3d-gaussians image
+    cmd: docker build -f docker/Dockerfile -t {{.TAG}} docker/
 
   push:
     desc: Push hierarchical-3d-gaussians image to Github Container Registry
@@ -22,3 +26,7 @@ tasks:
   pull:
     desc: Pull hierarchical-3d-gaussians image from Github Container Registry
     cmd: docker pull {{.TAG}}
+
+  run:
+    desc: Run hierarchical-3d-gaussians container
+    cmd: docker compose -f docker/docker-compose.yml up -d && docker exec -it hierarchical_3d_gaussians bash

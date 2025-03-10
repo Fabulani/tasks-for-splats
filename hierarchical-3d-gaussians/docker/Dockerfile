@@ -1,10 +1,9 @@
 FROM nvidia/cuda:12.3.0-devel-ubuntu22.04
-ARG USER_ID=1000
-ARG GROUP_ID=1000
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git wget unzip bzip2 sudo build-essential ca-certificates openssh-server vim ffmpeg libsm6 libxext6 python3-opencv gcc-11 g++-11 cmake
+    apt-get install -y --no-install-recommends git wget unzip bzip2 build-essential ca-certificates openssh-server vim ffmpeg libsm6 libxext6 python3-opencv gcc-11 g++-11 cmake
 
 # conda
 ENV PATH /opt/conda/bin:$PATH 
@@ -14,20 +13,13 @@ RUN wget --quiet \
     /bin/bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda && \
     rm -rf /tmp/*
 
-# Create the user
-RUN addgroup --gid $GROUP_ID user
-RUN useradd --create-home -s /bin/bash --uid $USER_ID --gid $GROUP_ID docker
-RUN adduser docker sudo
-RUN echo "docker ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-USER docker
-
-# Setup hierarchical_3d_gaussians
+# Install hierarchical_3d_gaussians Python dependencies
 RUN /opt/conda/bin/python -m ensurepip
 RUN /opt/conda/bin/python -m pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cu121
 RUN /opt/conda/bin/python -m pip install plyfile tqdm joblib exif scikit-learn timm==0.4.5 opencv-python==4.9.0.80 gradio_imageslider gradio==4.29.0 matplotlib
 
 # Install COLMAP dependencies
-RUN sudo apt-get install -y --no-install-recommends \
+RUN apt-get install -y --no-install-recommends \
     libboost-program-options-dev \
     libboost-filesystem-dev \
     libboost-graph-dev \
@@ -49,31 +41,36 @@ RUN sudo apt-get install -y --no-install-recommends \
     libsqlite3-dev \
     libceres-dev
 
-# Clone COLMAP repository
-RUN sudo git clone https://github.com/colmap/colmap
-
+# Clone and install COLMAP
+RUN git clone https://github.com/colmap/colmap
 RUN cd /colmap && \
-    sudo mkdir build && \
+    mkdir build && \
     cd build && \
-    sudo cmake -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -DCMAKE_CUDA_ARCHITECTURES="75;80;86;87;90" .. && \
-    sudo make -j4 && \
-    sudo make install
+    cmake -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -DCMAKE_CUDA_ARCHITECTURES="75;80;86;87;90" .. && \
+    make -j4 && \
+    make install
 
-WORKDIR /host
+# # Missing packages for SIBR viewers.
+# RUN apt-get install -y libassimp-dev libboost-all-dev libgtk-3-dev libopencv-dev libglfw3-dev libavdevice-dev libavcodec-dev libxxf86vm-dev libembree-dev
+
+# Clone hierarchical-3d-gaussians (h3dg)
+RUN git clone https://github.com/graphdeco-inria/hierarchical-3d-gaussians.git --recursive
+
+WORKDIR /hierarchical-3d-gaussians
 
 # Download Depth-Anything-V2 checkpoint
-RUN wget -O ./submodules/Depth-Anything-V2/checkpoints/depth_anything_v2_vitl.pth "https://huggingface.co/depth-anything/Depth-Anything-V2-Large/resolve/main/depth_anything_v2_vitl.pth?download=true"
+RUN mkdir -p submodules/Depth-Anything-V2/checkpoints/ && \
+    wget -O submodules/Depth-Anything-V2/checkpoints/depth_anything_v2_vitl.pth "https://huggingface.co/depth-anything/Depth-Anything-V2-Large/resolve/main/depth_anything_v2_vitl.pth?download=true"
 
 # Compile hierarchy generator and merger
 RUN cd submodules/gaussianhierarchy && \
     cmake . -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j --config Release
 
-# Missing packages for SIBR viewers. Need cleanup later.
-RUN apt-get install -y libassimp-dev libboost-all-dev libgtk-3-dev libopencv-dev libglfw3-dev libavdevice-dev libavcodec-dev libxxf86vm-dev libembree-dev
-
-# Copy the entrypoint script
-COPY entrypoint.sh /entrypoint.sh
+# Copy other files for h3dg
+COPY entrypoint.sh entrypoint.sh
+COPY run_all.sh run_all.sh
+COPY run_skip_colmap.sh run_skip_colmap.sh
 
 # Make the entrypoint script executable
-RUN sudo chmod +x /entrypoint.sh
+RUN chmod +x entrypoint.sh
