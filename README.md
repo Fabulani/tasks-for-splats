@@ -1,6 +1,6 @@
 # Gaussian Splats Research
 
-> Making Gaussian Splatting research repos easier to set up and use, one Taskfile at a time. 
+> Making Gaussian Splatting research repos easier to set up and use, one Dockerfile at a time. 
 
 This is a multi-project repository focusing on making Gaussian Splatting research repositories easier to set up and use. I use [Tasks](https://taskfile.dev/) and Docker for setting everything up, with Github Container Registry for housing the built images.
 
