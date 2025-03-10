@@ -1,5 +1,7 @@
 # Gaussian Splats Research
 
+> Making Gaussian Splatting research repos easier to set up and use, one Taskfile at a time. 
+
 This is a multi-project repository focusing on making Gaussian Splatting research repositories easier to set up and use. I use [Tasks](https://taskfile.dev/) and Docker for setting everything up, with Github Container Registry for housing the built images.
 
 ## Pre-requisites
@@ -10,13 +12,14 @@ Install [Tasks](https://taskfile.dev/installation/) and [Docker](https://docs.do
 
 Create a `.env` file in the project root and add the path to your datasets folder:
 
-```json
+```txt
 DATA_PATH="//c/Users/fabia/Documents/_datasets"
 ```
 
 This path will be bound to a docker volume and become available inside the containers `data` folder.
 
-> [!WARNING] On Windows, the path must start with two forward slashes (/): "//c/Users/fabulani/Documents/\_datasets"
+> [!IMPORTANT]
+> On Windows, the path must start with two forward slashes (/): "//c/Users/fabulani/Documents/\_datasets"
 
 Type `task` to see all available tasks and their descriptions. You can either run the `-all` tasks to set up all projects, or run the tasks specific to each project. For example, to clone all repositories:
 
@@ -34,4 +37,5 @@ task hierarchical-3d-gaussians:run
 
 These will pull the image, run the container, and exec into it.
 
-> [!NOTE] Read the README.md in each project for project-specific instructions.
+> [!NOTE]
+> Read the README.md in each project for project-specific instructions.
