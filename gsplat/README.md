@@ -1,7 +1,25 @@
+# gsplat
+
+Website: [gsplat: An Open-Source Library for Gaussian Splatting](https://github.com/nerfstudio-project/gsplat)
+
+## Dataset
+
+## Usage
+
+```sh
+task clone
+task build
+```
+
+The container is called `nerfstudio-gsplat-worker`.
+
 # gsplat -- with Docker
 
 Docker scripts based on [this PR](https://github.com/nerfstudio-project/gsplat/pull/303). Instead of Ubuntu 20.04 and CUDA 11.7, like in the PR, this fork uses Ubuntu 22.04 with latest PyTorch and CUDA 12.6, plus it pre-compiles wheels for dependencies that caused errors on Docker (i.e., `fused-ssim`).
 
+- [gsplat](#gsplat)
+  - [Dataset](#dataset)
+  - [Usage](#usage)
 - [gsplat -- with Docker](#gsplat----with-docker)
   - [Requirements](#requirements)
   - [Quickstart](#quickstart)
