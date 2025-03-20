@@ -11,6 +11,9 @@ includes:
     dir: ./hierarchical-3d-gaussians
 
 tasks:
+  default:
+    cmd: task --list-all
+  
   clone-all:
     desc: Clone all repositories
     cmds:
