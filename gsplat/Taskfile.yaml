@@ -4,6 +4,12 @@ vars:
   TAG_BASE: ghcr.io/fabulani/nerfstudio-gsplat-base:1.4.0
   TAG_WORKER: ghcr.io/fabulani/nerfstudio-gsplat-worker:1.4.0
   REPO_PATH: ./repo
+  GSPLAT_VERSION: 1.4.0
+    
+env:
+  MAX_JOBS: 10
+  TORCH_CUDA_ARCH_LIST: "7.5+PTX"
+  GSPLAT_VERSION: 1.4.0
 
 tasks:
   clone:
@@ -16,29 +22,33 @@ tasks:
 
   build:
     desc: Build gsplat image
-    silent: true
-    vars:
-      GSPLAT_VERSION: 1.4.0
-    env:
-      MAX_JOBS: 10
-      TORCH_CUDA_ARCH_LIST: "7.5+PTX"
     cmds:
-      - echo Building base image
-      - |
+      - task: build-base
+      - task: build-wheels
+      - task: build-worker
+
+  build-base:
+    desc: Build gsplat base image
+    internal: true
+    cmd: |
         docker build \
         -t {{.TAG_BASE}} \
         -f ./docker/gsplat_base.dockerfile {{.REPO_PATH}}
 
-      - echo Building wheels
-      - |
+  build-wheels:
+    desc: Build gsplat wheels
+    internal: true
+    cmd: |
         docker run -t --rm --name nerfstudio-gsplat-wheel \
         --gpus 1 \
         -v ${PWD}/{{.REPO_PATH}}:/gsplat \
         {{.TAG_BASE}} \
         bash -c "cd /gsplat && python3 setup.py sdist bdist_wheel && cd /fused-ssim && python3 setup.py sdist bdist_wheel && mv /fused-ssim/dist/* /gsplat/dist/"
 
-      - echo Building worker image
-      - |
+  build-worker:
+    desc: Build gsplat worker image
+    internal: false
+    cmd: |
         docker build \
         --build-arg BASE_IMAGE={{.TAG_BASE}} \
         --build-arg GSPLAT_VERSION={{.GSPLAT_VERSION}} \
@@ -56,3 +66,9 @@ tasks:
     cmds:
       - docker pull {{.TAG_BASE}}
       - docker pull {{.TAG_WORKER}}
+
+  run:
+    desc: Run gsplat
+    cmds:
+      - docker compose -f ./docker/docker-compose.yml up -d
+      - docker exec -it nerfstudio-gsplat-worker bash
