@@ -4,12 +4,54 @@ Website: [gsplat: An Open-Source Library for Gaussian Splatting](https://github.
 
 ## Dataset
 
+Your dataset must be structured like so:
+
+```txt
+- dataset-name
+
+-- images
+--- img1.png
+--- img2.png
+--- ...
+
+-- sparse
+--- cameras.bin
+--- images.bin
+--- points3D.bin
+
+
+- other-dataset ...
+```
+
 ## Usage
 
+> [!NOTE]
+> $DATA_PATH environment variable is required to set up the Docker volume! Set it to the path to your datasets folder.
+
+Use `task --list` to see available tasks.
+
+Get the image ready by either:
+
+1. Pulling it: `task pull`
+2. Building it: `task build`
+
+Run the container with `task run`.
+
+Inside the container, train a Gaussian Splatting model with:
+
 ```sh
-task clone
-task build
+python3 examples/simple_trainer.py default --data_dir data/<your-data-folder> --data_factor 1 --result_dir data/results/<some-output-folder>
+
+python3 examples/simple_trainer.py default --data_dir data/360_v2/garden --data_factor 8 --result_dir data/results/ggarden
 ```
+
+where:
+
+- `--data_dir` is the path to the dataset you'd like to use. Specify the folder containing `images` and `sparse`.
+- `--result_dir` is the path to the output folder, where gsplat will save checkpoints and other outputs. If you want results to be persistent, save them to the `data` folder, e.g., `data/results/<some-output-folder>`.
+- `--data_factor` is the downscaling factor for images.
+
+Gsplat might require some CUDA setup on first run.
 
 The container is called `nerfstudio-gsplat-worker`.
 
