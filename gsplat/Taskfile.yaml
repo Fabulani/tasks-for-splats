@@ -1,15 +1,14 @@
 version: '3'
 
 vars:
+  TAG: ghcr.io/fabulani/nerfstudio-gsplat:1.4.0
   TAG_BASE: ghcr.io/fabulani/nerfstudio-gsplat-base:1.4.0
   TAG_WORKER: ghcr.io/fabulani/nerfstudio-gsplat-worker:1.4.0
   REPO_PATH: ./repo
-  GSPLAT_VERSION: 1.4.0
-    
+  
 env:
   MAX_JOBS: 10
   TORCH_CUDA_ARCH_LIST: "7.5+PTX"
-  GSPLAT_VERSION: 1.4.0
 
 tasks:
   clone:
@@ -18,14 +17,21 @@ tasks:
       REPO: https://github.com/nerfstudio-project/gsplat.git
     cmds: 
       - git clone {{.REPO}} {{.REPO_PATH}} --recursive
-      - cp requirements.txt {{.REPO_PATH}}/examples/requirements.txt
+      - cp docker/requirements.txt {{.REPO_PATH}}/examples/requirements.txt
 
   build:
-    desc: Build gsplat image
+    desc: Build gsplat base and worker images
     cmds:
       - task: build-base
       - task: build-wheels
       - task: build-worker
+  
+  build-test:
+    cmd: |
+        docker build \
+        --build-arg TORCH_CUDA_ARCH_LIST=$TORCH_CUDA_ARCH_LIST \
+        -t {{.TAG}} \
+        -f ./docker/Dockerfile ./docker
 
   build-base:
     desc: Build gsplat base image
@@ -33,7 +39,7 @@ tasks:
     cmd: |
         docker build \
         -t {{.TAG_BASE}} \
-        -f ./docker/gsplat_base.dockerfile {{.REPO_PATH}}
+        -f ./docker/gsplat_base.dockerfile ./docker
 
   build-wheels:
     desc: Build gsplat wheels
@@ -41,9 +47,16 @@ tasks:
     cmd: |
         docker run -t --rm --name nerfstudio-gsplat-wheel \
         --gpus 1 \
-        -v ${PWD}/{{.REPO_PATH}}:/gsplat \
+        -v "$(pwd)/docker/dist:/workspace/dist" \
         {{.TAG_BASE}} \
-        bash -c "cd /gsplat && python3 setup.py sdist bdist_wheel && cd /fused-ssim && python3 setup.py sdist bdist_wheel && mv /fused-ssim/dist/* /gsplat/dist/"
+        bash -c "
+          cd /workspace/gsplat && \
+          python3 setup.py sdist bdist_wheel && \
+          cd /workspace/fused-ssim && \
+          python3 setup.py sdist bdist_wheel && \
+          mv /workspace/gsplat/dist/* /workspace/dist/ && \
+          mv /workspace/fused-ssim/dist/* /workspace/dist/
+        "
 
   build-worker:
     desc: Build gsplat worker image
@@ -51,9 +64,8 @@ tasks:
     cmd: |
         docker build \
         --build-arg BASE_IMAGE={{.TAG_BASE}} \
-        --build-arg GSPLAT_VERSION={{.GSPLAT_VERSION}} \
         -t {{.TAG_WORKER}} \
-        -f ./docker/gsplat_worker.dockerfile {{.REPO_PATH}}
+        -f ./docker/gsplat_worker.dockerfile ./docker
 
   push:
     desc: Push gsplat image to Github Container Registry
@@ -71,4 +83,4 @@ tasks:
     desc: Run gsplat
     cmds:
       - docker compose -f ./docker/docker-compose.yml up -d
-      - docker exec -it nerfstudio-gsplat-worker bash
+      - docker exec -it nerfstudio-gsplat bash

@@ -1,32 +1,18 @@
-FROM ubuntu:22.04
-
-ENV DEBIAN_FRONTEND=noninteractive
+FROM pytorch/pytorch:2.6.0-cuda12.6-cudnn9-devel
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget \
-    build-essential \
-    python-is-python3 \
-    python3-dev \
-    python3-pip \ 
-    libglm-dev \
-    git
+    git \
+    # cleanup
+    && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists
 
+WORKDIR /workspace
 
-# CUDA Toolkit required for gsplat due to nvcc dependency:
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb \
-    && dpkg -i cuda-keyring_1.1-1_all.deb \
-    && apt-get update \
-    && apt-get -y install cuda-toolkit-12-6 \
-    && rm cuda-keyring_1.1-1_all.deb
+# gsplat
+RUN git clone https://github.com/nerfstudio-project/gsplat.git --recursive && \
+    cd gsplat && \
+    git checkout 2043ddc
 
-ENV CUDA_HOME=/usr/local/cuda
-ENV PATH=${CUDA_HOME}/bin${PATH:+:${PATH}}
-ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
-
-# PyTorch
-RUN pip3 install --no-cache-dir --upgrade pip setuptools && \
-    pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
-
+# fused-ssim - gsplat dependency
 RUN git clone https://github.com/rahul-goel/fused-ssim.git && \
     cd fused-ssim && \
     git checkout 1272e21a282342e89537159e4bad508b19b34157

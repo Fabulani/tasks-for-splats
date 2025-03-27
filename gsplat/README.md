@@ -40,8 +40,16 @@ Run the container with `task run`.
 Inside the container, train a Gaussian Splatting model with:
 
 ```sh
-python3 examples/simple_trainer.py default --data_dir data/<your-data-folder> --data_factor 1 --result_dir data/results/<some-output-folder>
+python3 examples/simple_trainer.py default \
+--data_dir data/your-data-folder \
+--data_factor 1 \
+--result_dir data/results/some-output-folder
 ```
+
+python examples/simple_trainer.py default \
+--data_dir data/360_v2/garden \
+--data_factor 8 \
+--result_dir data/results/garden-test
 
 where:
 
