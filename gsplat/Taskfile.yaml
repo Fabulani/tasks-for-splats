@@ -18,7 +18,7 @@ tasks:
       - |
         git clone {{.REPO}} {{.REPO_PATH}} --recursive && \
         cd {{.REPO_PATH}} && \
-        git checkout {{.GIT_COMMIT_ID}}
+        git checkout {{.COMMIT_ID}}
       - cp docker/requirements.txt {{.REPO_PATH}}/examples/requirements.txt
 
   build:
