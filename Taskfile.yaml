@@ -3,7 +3,7 @@ version: '3'
 dotenv: ['.env']
 
 env:
-  TORCH_CUDA_ARCH_LIST: "7.5+PTX"
+  TORCH_CUDA_ARCH_LIST: "7.5+PTX"  # Defining the env here does not work for gsplat. It must be defined inside its Dockerfile.
 
 includes:
   gsplat: 
