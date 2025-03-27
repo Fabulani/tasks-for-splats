@@ -2,6 +2,15 @@
 
 Website: [gsplat: An Open-Source Library for Gaussian Splatting](https://github.com/nerfstudio-project/gsplat)
 
+From their page:
+
+> gsplat is an open-source library for CUDA-accelerated differentiable rasterization of 3D gaussians with Python bindings. It is inspired by the SIGGRAPH paper “3D Gaussian Splatting for Real-Time Rendering of Radiance Fields”, but we’ve made gsplat even faster, more memory efficient, and with a growing list of new features!
+>
+> - (...) gsplat enables up to 4x less training memory footprint, and up to 15% less training time on Mip-NeRF 360 captures. (...)
+> - gsplat is designed to support extremely large scene rendering, which is magnitudes faster than the official CUDA backend diff-gaussian-rasterization. (...)
+> - gsplat offers (...) batch rasterization, N-D feature rendering, depth rendering, sparse gradient, multi-GPU distributed rasterization etc. (...)
+> - gsplat is equipped with (...) absgrad, anti-aliasing, 3DGS-MCMC etc. And more to come!
+
 ## Dataset
 
 Your dataset must be structured like so:
@@ -24,11 +33,6 @@ Your dataset must be structured like so:
 ```
 
 ## Usage
-
-> [!NOTE]
-> $DATA_PATH environment variable is required to set up the Docker volume! Set it to the path to your datasets folder.
-
-Use `task --list` to see available tasks.
 
 Get the image ready by either:
 
@@ -57,115 +61,4 @@ where:
 - `--result_dir` is the path to the output folder, where gsplat will save checkpoints and other outputs. If you want results to be persistent, save them to the `data` folder, e.g., `data/results/<some-output-folder>`.
 - `--data_factor` is the downscaling factor for images.
 
-Gsplat might require some CUDA setup on first run.
-
-The container is called `nerfstudio-gsplat-worker`.
-
-# gsplat -- with Docker
-
-Docker scripts based on [this PR](https://github.com/nerfstudio-project/gsplat/pull/303). Instead of Ubuntu 20.04 and CUDA 11.7, like in the PR, this fork uses Ubuntu 22.04 with latest PyTorch and CUDA 12.6, plus it pre-compiles wheels for dependencies that caused errors on Docker (i.e., `fused-ssim`).
-
-- [gsplat](#gsplat)
-  - [Dataset](#dataset)
-  - [Usage](#usage)
-- [gsplat -- with Docker](#gsplat----with-docker)
-  - [Requirements](#requirements)
-  - [Quickstart](#quickstart)
-  - [Build the images](#build-the-images)
-  - [How-to Gaussian Splatting in gsplat](#how-to-gaussian-splatting-in-gsplat)
-  - [Troubleshoot](#troubleshoot)
-
-## Requirements
-
-- Nvidia GPU: <https://docs.docker.com/engine/containers/resource_constraints/#gpu>
-- Docker.
-
-## Quickstart
-
-> Assumes the image is already built or pulled from Github Container Registry. If not, go to [Build the images](#build-the-images).
-
-Create a `.env` file in the project root:
-
-```txt
-# Inside .env
-# Path to the dataset directory, e.g. C:/Users/username/Documents/datasets
-HOST_DATA_PATH="your/path"
-
-# gsplat version.
-GSPLAT_VERSION="1.4.0"
-```
-
-Run with:
-
-```sh
-docker compose up -d
-docker exec -it nerfstudio-gsplat-worker bash
-```
-
-Stop container with:
-
-```sh
-docker compose down
-```
-
----
-
-Alternatively, build and run the container with:
-
-```sh
-docker run --gpus all --name nerfstudio-gsplat-worker -it -v $HOST_DATA_PATH:/workspaces/gsplat/data nerfstudio-gsplat-worker:1.4.0
-```
-
-> Note! The `HOST_DATA_PATH` environment variable must be the path to your datasets folder.
-
-## Build the images
-
-There are two images:
-
-- `nerfstudio-gsplat-base`: builder image for compiling CUDA scripts and generating the necessary `.whl` files for Python packages.
-- `nerfstudio-gsplat-worker`: runtime image which will install the packages and run `gsplat`.
-
-Build the images with:
-
-```sh
-./build_image.sh
-```
-
-## How-to Gaussian Splatting in gsplat
-
-First, make sure your `./data` folder is structured correctly:
-
-```txt
-- data
--- dataset-name
-
---- images
----- img1.png
----- img2.png
----- ...
-
---- sparse
----- cameras.bin
----- images.bin
----- points3D.bin
-
-
--- other-dataset ...
-```
-
-Train a splat model with:
-
-```sh
-python3 examples/simple_trainer.py default --data_dir data/<your-data-folder> --data_factor 1 --result_dir results/<some-output-folder>
-```
-
-where:
-
-- `--data_dir` is the path to the dataset you'd like to use. Specify the folder containing `images` and `sparse`.
-- `--result_dir` is the path to the output folder, where gsplat will save checkpoints and other outputs. If you want results to be persistent, save them to the `data` folder, e.g., `data/results/<some-output-folder>`.
-- `--data_factor` is for when the input images are downscaled (see MIP nerf dataset). For our datasets, we'll mostly only ever use `1`.
-
-## Troubleshoot
-
-- You can use `test_cuda.py` to check if PyTorch and CUDA are working.
-- If `fused-ssim` fails to build wheels (on Windows), increase WSL memory to at least 6GB in `.wslconfig`.
+For further details, see the [gsplat documentation](https://docs.gsplat.studio/main/).
