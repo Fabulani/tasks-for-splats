@@ -13,19 +13,15 @@ Install [Tasks](https://taskfile.dev/installation/) and [Docker](https://docs.do
 Create a `.env` file in the project root and add the path to your datasets folder, e.g.:
 
 ```txt
-DATA_PATH="//c/.fabiano/datasets"
+DATA_PATH="//c/path/to/datasets"
 ```
 
 This path will be bound to a docker volume and become available inside the containers `data` folder.
 
 > [!IMPORTANT]
-> On Windows, the path must start with two forward slashes (/): "//c/.fabiano/datasets"
+> On Windows, the path must start with two forward slashes (/). For a path in the C drive: "//c/path/to/datasets"
 
-Type `task` to see all available tasks and their descriptions. You can either run the `-all` tasks to set up all projects, or run the tasks specific to each project. For example, to clone all repositories:
-
-```bash
-task clone-all
-```
+Type `task` to see all available tasks and their descriptions.
 
 To work on a specific project, run the tasks associated with that project. For example, with `hierarchical-3d-gaussians`, the following should be enough:
 
@@ -39,3 +35,9 @@ These will pull the image, run the container, and exec into it.
 
 > [!NOTE]
 > Read the README.md in each project for project-specific instructions.
+
+The `-all` tasks are for batch execution of tasks from all projects. For example, to clone all repositories:
+
+```bash
+task clone-all
+```
