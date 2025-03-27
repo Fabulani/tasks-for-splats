@@ -12,6 +12,9 @@ includes:
   hierarchical-3d-gaussians: 
     taskfile: ./hierarchical-3d-gaussians/Taskfile.yaml
     dir: ./hierarchical-3d-gaussians
+  3dgsconverter:
+    taskfile: ./3dgsconverter/Taskfile.yaml
+    dir: ./3dgsconverter
 
 tasks:
   default:
@@ -22,22 +25,26 @@ tasks:
     cmds:
       - task: gsplat:clone
       - task: hierarchical-3d-gaussians:clone
+      - task: 3dgsconverter:clone
 
   build-all:
     desc: Build all Docker images
     cmds:
       - task: gsplat:build
       - task: hierarchical-3d-gaussians:build
+      - task: 3dgsconverter:build
 
   push-all:
     desc: Push to Github Container Registry
     cmds:
       - task: gsplat:push
       - task: hierarchical-3d-gaussians:push
+      - task: 3dgsconverter:push
 
   pull-all:
     desc: Pull all images from Github Container Registry
     cmds:
       - task: gsplat:pull
       - task: hierarchical-3d-gauss:pull
+      - task: 3dgsconverter:pull
 
