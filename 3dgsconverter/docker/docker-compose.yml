@@ -1,0 +1,19 @@
+name: research-3dgsconverter
+services:
+  3dgsconverter:
+    container_name: 3dgsconverter
+    stdin_open: true
+    tty: true 
+    image: ghcr.io/fabulani/3dgsconverter:latest
+    pull_policy: never
+    volumes:  # Change to named volumes for production!
+      - ${DATA_PATH}:/workspace/3dgsconverter/data
+    ipc: host
+    command: ["bash"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

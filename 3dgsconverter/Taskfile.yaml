@@ -1,0 +1,31 @@
+version: '3'
+
+vars:
+  TAG: ghcr.io/fabulani/3dgsconverter:latest
+  REPO_PATH: ./repo
+
+tasks:
+  clone:
+    desc: Clone 3dgsconverter
+    vars:
+      REPO: https://github.com/francescofugazzi/3dgsconverter.git
+    cmds: 
+      - git clone {{.REPO}} {{.REPO_PATH}} --recursive
+
+  build:
+    desc: Build 3dgsconverter image
+    cmd: docker build -f docker/Dockerfile -t {{.TAG}} docker/
+
+  push:
+    desc: Push 3dgsconverter image to Github Container Registry
+    cmds:
+      - docker push {{.TAG}}
+
+  pull:
+    desc: Pull 3dgsconverter image from Github Container Registry
+    cmds:
+      - docker pull {{.TAG}}
+
+  run:
+    desc: Run 3dgsconverter image
+    cmd: docker compose -f docker/docker-compose.yml up -d && docker exec -it 3dgsconverter bash
