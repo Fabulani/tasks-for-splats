@@ -1,0 +1,41 @@
+# For CUDA 11.8, use: pytorch/pytorch:2.6.0-cuda11.8-cudnn9-devel
+FROM pytorch/pytorch:2.6.0-cuda12.6-cudnn9-devel
+
+# For some reason, TORCH_CUDA_ARCH_LIST must be defined in the Dockerfile, otherwise gsplat will not compile. 
+# Passing it as a build-arg does not work, neither does defining it as an env variable in the Taskfile.
+ENV TORCH_CUDA_ARCH_LIST="7.5+PTX"
+
+WORKDIR /workspace
+
+# Required for install of packages from examples/requirements.txt.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    wget \
+    # Required for running simple_trainer.py
+    libgl1 \
+    libglib2.0-0 \
+    # Other requirements
+    libglm-dev \
+    # Cleanup
+    && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists
+
+# Download AlexNet checkpoint
+RUN mkdir -p /root/.cache/torch/hub/checkpoints && \
+    wget -O /root/.cache/torch/hub/checkpoints/alexnet-owt-7be5be79.pth \
+    https://download.pytorch.org/models/alexnet-owt-7be5be79.pth
+
+# Clone, install, and compile gsplat and its CUDA scripts
+# Note: commit must be later than ae729d3 - this fixes a cuda compilation error!
+ARG GIT_COMMIT_ID=e86f392
+RUN git clone https://github.com/nerfstudio-project/gsplat.git --recursive && \
+    cd gsplat && \
+    git checkout ${GIT_COMMIT_ID}
+RUN pip install --no-cache-dir git+https://github.com/nerfstudio-project/gsplat.git@${GIT_COMMIT_ID}
+
+WORKDIR /workspace/gsplat
+
+# Custom requirements file fixes issues with some libraries
+COPY requirements.txt examples/requirements.txt
+
+# Install gsplat examples requirements
+RUN pip install --no-cache-dir -r examples/requirements.txt

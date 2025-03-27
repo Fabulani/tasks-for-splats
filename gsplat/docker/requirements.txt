@@ -27,5 +27,4 @@ tensorly
 pyyaml
 matplotlib
 
-# Due to CUDA compilation errors on Docker, fused-ssim is pre-built as a wheel in the base container and then installed using the wheel in the worker container.
-# git+https://github.com/rahul-goel/fused-ssim@1272e21a282342e89537159e4bad508b19b34157
+git+https://github.com/rahul-goel/fused-ssim@1272e21a282342e89537159e4bad508b19b34157

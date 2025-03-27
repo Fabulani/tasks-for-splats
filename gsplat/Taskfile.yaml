@@ -1,58 +1,46 @@
 version: '3'
 
 vars:
-  TAG_BASE: ghcr.io/fabulani/nerfstudio-gsplat-base:1.4.0
-  TAG_WORKER: ghcr.io/fabulani/nerfstudio-gsplat-worker:1.4.0
+  TAG: ghcr.io/fabulani/nerfstudio-gsplat:1.4.0
   REPO_PATH: ./repo
+  
+env:
+  MAX_JOBS: 10
+  TORCH_CUDA_ARCH_LIST: "7.5+PTX"  # Defining the env here does not work. It must be defined inside the Dockerfile.
 
 tasks:
   clone:
     desc: Clone gsplat
     vars:
       REPO: https://github.com/nerfstudio-project/gsplat.git
+      COMMIT_ID: e86f392
     cmds: 
-      - git clone {{.REPO}} {{.REPO_PATH}} --recursive
-      - cp requirements.txt {{.REPO_PATH}}/examples/requirements.txt
+      - |
+        git clone {{.REPO}} {{.REPO_PATH}} --recursive && \
+        cd {{.REPO_PATH}} && \
+        git checkout {{.GIT_COMMIT_ID}}
+      - cp docker/requirements.txt {{.REPO_PATH}}/examples/requirements.txt
 
   build:
     desc: Build gsplat image
-    silent: true
-    vars:
-      GSPLAT_VERSION: 1.4.0
-    env:
-      MAX_JOBS: 10
-      TORCH_CUDA_ARCH_LIST: "7.5+PTX"
-    cmds:
-      - echo Building base image
-      - |
+    cmd: |
         docker build \
-        -t {{.TAG_BASE}} \
-        -f ./docker/gsplat_base.dockerfile {{.REPO_PATH}}
-
-      - echo Building wheels
-      - |
-        docker run -t --rm --name nerfstudio-gsplat-wheel \
-        --gpus 1 \
-        -v ${PWD}/{{.REPO_PATH}}:/gsplat \
-        {{.TAG_BASE}} \
-        bash -c "cd /gsplat && python3 setup.py sdist bdist_wheel && cd /fused-ssim && python3 setup.py sdist bdist_wheel && mv /fused-ssim/dist/* /gsplat/dist/"
-
-      - echo Building worker image
-      - |
-        docker build \
-        --build-arg BASE_IMAGE={{.TAG_BASE}} \
-        --build-arg GSPLAT_VERSION={{.GSPLAT_VERSION}} \
-        -t {{.TAG_WORKER}} \
-        -f ./docker/gsplat_worker.dockerfile {{.REPO_PATH}}
+        --build-arg TORCH_CUDA_ARCH_LIST=$TORCH_CUDA_ARCH_LIST \
+        -t {{.TAG}} \
+        -f ./docker/Dockerfile ./docker
 
   push:
     desc: Push gsplat image to Github Container Registry
     cmds:
-      - docker push {{.TAG_BASE}}
-      - docker push {{.TAG_WORKER}}
+      - docker push {{.TAG}}
 
   pull:
     desc: Pull gsplat image from Github Container Registry
     cmds:
-      - docker pull {{.TAG_BASE}}
-      - docker pull {{.TAG_WORKER}}
+      - docker pull {{.TAG}}
+
+  run:
+    desc: Run gsplat
+    cmds:
+      - docker compose -f ./docker/docker-compose.yml up -d
+      - docker exec -it nerfstudio-gsplat bash
