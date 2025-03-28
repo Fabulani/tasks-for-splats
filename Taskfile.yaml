@@ -2,13 +2,13 @@ version: '3'
 
 dotenv: ['.env']
 
-env:
-  TORCH_CUDA_ARCH_LIST: "7.5+PTX"  # Defining the env here does not work for gsplat. It must be defined inside its Dockerfile.
-
 includes:
   gsplat: 
     taskfile: ./gsplat/Taskfile.yaml
     dir: ./gsplat
+    vars:
+      TORCH_CUDA_ARCH_LIST: "7.5+PTX"
+      MAX_JOBS: 10
   hierarchical-3d-gaussians: 
     taskfile: ./hierarchical-3d-gaussians/Taskfile.yaml
     dir: ./hierarchical-3d-gaussians
