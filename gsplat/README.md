@@ -50,11 +50,6 @@ python3 examples/simple_trainer.py default \
 --result_dir data/results/some-output-folder
 ```
 
-python examples/simple_trainer.py default \
---data_dir data/360_v2/garden \
---data_factor 8 \
---result_dir data/results/garden-test
-
 where:
 
 - `--data_dir` is the path to the dataset you'd like to use. Specify the folder containing `images` and `sparse`.
