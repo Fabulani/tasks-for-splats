@@ -1,18 +1,22 @@
 version: '3'
 
 vars:
-  TAG: ghcr.io/fabulani/nerfstudio-gsplat:1.4.0
-  REPO_PATH: ./repo
-  
-env:
-  MAX_JOBS: 10
-  TORCH_CUDA_ARCH_LIST: "7.5+PTX"  # Defining the env here does not work. It must be defined inside the Dockerfile.
+  NAME: nerfstudio-gsplat
+  VERSION_TAG: 1.4.0
+  REPOSITORIES: 
+    - ghcr.io/fabulani
+  TAGS:  # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
+    sh: |
+      for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
+        echo "$repo/{{ .NAME }}:{{ .VERSION_TAG }}"
+      done
 
 tasks:
   clone:
     desc: Clone gsplat
     vars:
       REPO: https://github.com/nerfstudio-project/gsplat.git
+      REPO_PATH: ./repo
       COMMIT_ID: e86f392
     cmds: 
       - |
@@ -23,21 +27,29 @@ tasks:
 
   build:
     desc: Build gsplat image
-    cmd: |
+    requires:
+      vars: [TORCH_CUDA_ARCH_LIST, MAX_JOBS]
+    cmds: 
+      - |
         docker build \
-        --build-arg TORCH_CUDA_ARCH_LIST=$TORCH_CUDA_ARCH_LIST \
-        -t {{.TAG}} \
+        --build-arg TORCH_CUDA_ARCH_LIST={{.TORCH_CUDA_ARCH_LIST}} \
+        --build-arg MAX_JOBS={{.MAX_JOBS}} \
+        -t "{{ .NAME }}:{{ .VERSION_TAG }}" \
         -f ./docker/Dockerfile ./docker
+      - for: { var: TAGS }
+        cmd: docker tag "{{ .NAME }}:{{ .VERSION_TAG }}" "{{ .ITEM }}"
 
   push:
-    desc: Push gsplat image to Github Container Registry
+    desc: Push image to registry
     cmds:
-      - docker push {{.TAG}}
+      - for: { var: TAGS }
+        cmd: docker push {{ .ITEM }}
 
   pull:
-    desc: Pull gsplat image from Github Container Registry
+    desc: Pull image from registry
     cmds:
-      - docker pull {{.TAG}}
+      - docker pull {{ index .TAGS 0 }}
+      - docker tag {{ index .TAGS 0 }} "{{ .NAME }}:{{ .VERSION_TAG }}"
 
   run:
     desc: Run gsplat

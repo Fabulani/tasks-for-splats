@@ -1,13 +1,15 @@
 # For CUDA 11.8, use: pytorch/pytorch:2.6.0-cuda11.8-cudnn9-devel
 FROM pytorch/pytorch:2.6.0-cuda12.6-cudnn9-devel
 
-# For some reason, TORCH_CUDA_ARCH_LIST must be defined in the Dockerfile, otherwise gsplat will not compile. 
-# Passing it as a build-arg does not work, neither does defining it as an env variable in the Taskfile.
-ENV TORCH_CUDA_ARCH_LIST="7.5+PTX"
+
+# Build arguments
+ARG TORCH_CUDA_ARCH_LIST="7.5+PTX"
+ENV TORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST}
+ARG MAX_JOBS=10
+ENV MAX_JOBS=${MAX_JOBS}
 
 WORKDIR /workspace
 
-# Required for install of packages from examples/requirements.txt.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     wget \
