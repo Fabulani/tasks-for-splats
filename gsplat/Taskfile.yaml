@@ -5,7 +5,6 @@ vars:
   VERSION_TAG: 1.4.0
   REPOSITORIES: 
     - ghcr.io/fabulani
-    - harbor.management.twinverse.dev/twinverse
   TAGS:  # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
     sh: |
       for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
