@@ -59,7 +59,7 @@ Adding new projects follows this workflow:
    └── Taskfile.yaml
    ```
 
-2. Copy needed templates from the `./templates` folder (e.g., `Taskfile.template.yaml`, `README.template.md`, and `docker-compose.template.yml`). Rename and customize them as needed.
+2. Copy needed templates from the `./.templates` folder (e.g., `Taskfile.template.yaml`, `README.template.md`, and `docker-compose.template.yml`). Rename and customize them as needed.
 3. Add Dockerfile and other necessary files to the `docker` folder.
 4. Check that all tasks from the new project work.
 5. Open a PR and wait for the merge!

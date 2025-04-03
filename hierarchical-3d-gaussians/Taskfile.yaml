@@ -2,7 +2,7 @@ version: "3"
 
 includes:
   common:
-    taskfile: ../templates/Taskfile.common.yaml
+    taskfile: ../.templates/Taskfile.common.yaml
     dir: ./
     internal: true
 
