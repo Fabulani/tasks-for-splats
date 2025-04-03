@@ -1,58 +1,61 @@
-version: '3'
+version: "3"
+
+includes:
+  common:
+    taskfile: ../templates/Taskfile.common.yaml
+    dir: ./
+    internal: true
 
 vars:
+  # - docker image
   NAME: nerfstudio-gsplat
   VERSION_TAG: 1.4.0
-  REPOSITORIES: 
+  REPOSITORIES:
     - ghcr.io/fabulani
-  TAGS:  # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
+  TAGS: # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
     sh: |
       for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
-        echo "$repo/{{ .NAME }}:{{ .VERSION_TAG }}"
+        echo -n "$repo/{{ .NAME }}:{{ .VERSION_TAG }} "
       done
 
+  # - docker build
+  BUILD_ARGS:
+    ref: |
+      dict
+      "TORCH_CUDA_ARCH_LIST" "\"7.5+PTX\""
+      "MAX_JOBS" "8"
+
+  # - cloning
+  REPO: https://github.com/nerfstudio-project/gsplat.git
+  REPO_PATH: ./repo
+  COMMIT_ID: e86f392
+
 tasks:
+  default:
+    cmd: task --list
+
   clone:
-    desc: Clone gsplat
-    vars:
-      REPO: https://github.com/nerfstudio-project/gsplat.git
-      REPO_PATH: ./repo
-      COMMIT_ID: e86f392
-    cmds: 
-      - |
-        git clone {{.REPO}} {{.REPO_PATH}} --recursive && \
-        cd {{.REPO_PATH}} && \
-        git checkout {{.COMMIT_ID}}
+    desc: Clone {{.NAME}} and checkout {{.COMMIT_ID}}
+    cmds:
+      - task: common:clone
       - cp docker/requirements.txt {{.REPO_PATH}}/examples/requirements.txt
 
   build:
-    desc: Build gsplat image
-    requires:
-      vars: [TORCH_CUDA_ARCH_LIST, MAX_JOBS]
-    cmds: 
-      - |
-        docker build \
-        --build-arg TORCH_CUDA_ARCH_LIST={{.TORCH_CUDA_ARCH_LIST}} \
-        --build-arg MAX_JOBS={{.MAX_JOBS}} \
-        -t "{{ .NAME }}:{{ .VERSION_TAG }}" \
-        -f ./docker/Dockerfile ./docker
-      - for: { var: TAGS }
-        cmd: docker tag "{{ .NAME }}:{{ .VERSION_TAG }}" "{{ .ITEM }}"
+    desc: Build and tag image {{ .NAME }}:{{ .VERSION_TAG }}
+    cmds:
+      - task: common:build
 
   push:
-    desc: Push image to registry
+    desc: Push image to registries {{.REPOSITORIES}}
     cmds:
-      - for: { var: TAGS }
-        cmd: docker push {{ .ITEM }}
+      - task: common:push
 
   pull:
-    desc: Pull image from registry
+    desc: Pull image from registries {{.REPOSITORIES}}
     cmds:
-      - docker pull {{ index .TAGS 0 }}
-      - docker tag {{ index .TAGS 0 }} "{{ .NAME }}:{{ .VERSION_TAG }}"
+      - task: common:pull
 
   run:
-    desc: Run gsplat
+    desc: Run {{.NAME}}
     cmds:
-      - docker compose -f ./docker/docker-compose.yml up -d
-      - docker exec -it nerfstudio-gsplat bash
+      - task: common:run
