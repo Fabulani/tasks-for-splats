@@ -1,15 +1,15 @@
-version: '3'
+version: "3"
 
-dotenv: ['.env']
+dotenv: [".env"]
 
 includes:
-  gsplat: 
+  gsplat:
     taskfile: ./gsplat/Taskfile.yaml
     dir: ./gsplat
     vars:
       TORCH_CUDA_ARCH_LIST: "7.5+PTX"
       MAX_JOBS: 10
-  hierarchical-3d-gaussians: 
+  hierarchical-3d-gaussians:
     taskfile: ./hierarchical-3d-gaussians/Taskfile.yaml
     dir: ./hierarchical-3d-gaussians
     aliases: [h3dgs]
@@ -20,7 +20,7 @@ includes:
 tasks:
   default:
     cmd: task --list-all
-  
+
   clone-all:
     desc: Clone all repositories
     cmds:
@@ -48,4 +48,3 @@ tasks:
       - task: gsplat:pull
       - task: hierarchical-3d-gauss:pull
       - task: 3dgsconverter:pull
-
