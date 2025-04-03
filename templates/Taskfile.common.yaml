@@ -1,0 +1,64 @@
+version: "3"
+
+tasks:
+  clone:
+    desc: Clone repository and checkout specific commit
+    internal: true
+    requires:
+      vars: [REPO, REPO_PATH, COMMIT_ID]
+    cmds:
+      - echo "Cloning {{.REPO}} commit {{.COMMIT_ID}} to {{.REPO_PATH}}."
+      - |
+        git clone {{.REPO}} {{.REPO_PATH}} --recursive && \
+        cd {{.REPO_PATH}} && \
+        git checkout {{.COMMIT_ID}}
+
+  build:
+    desc: Build and tag image
+    internal: true
+    requires:
+      vars: [TAGS, NAME, VERSION_TAG]
+    cmds: # BUILD_ARGS is an optional Map defined with a REF resolver: https://taskfile.dev/usage/#variables
+      - echo "Building {{.NAME}}:{{.VERSION_TAG}}."
+      - |
+        docker build
+        {{- range $key, $value := .BUILD_ARGS }} --build-arg {{$key}}={{$value}} {{- end}} \
+        -t "{{ .NAME }}:{{ .VERSION_TAG }}" \
+        -f ./docker/Dockerfile \
+        ./docker
+      - echo "Tagging {{.NAME}}:{{.VERSION_TAG}}."
+      - for: { var: TAGS, as: TAG }
+        cmd: docker tag "{{ .NAME }}:{{ .VERSION_TAG }}" "{{ .TAG }}"
+      - echo "Added tags {{.TAGS}}."
+
+  push:
+    desc: Push image to registries
+    internal: true
+    requires:
+      vars: [TAGS]
+    cmds:
+      - echo "Pushing to {{.REPOSITORIES}}."
+      - for: { var: TAGS, as: TAG }
+        cmd: docker push {{ .TAG }}
+
+  pull:
+    desc: Pull image from registries
+    internal: true
+    requires:
+      vars: [TAGS, NAME, VERSION_TAG]
+    cmds:
+      - echo "Pulling from {{.TAGS}}"
+      - for: { var: TAGS, as: TAG }
+        cmd: |
+          docker pull {{ .TAG }} && \
+          docker tag {{ .TAG }} {{ .NAME }}:{{ .VERSION_TAG }}
+
+  run:
+    desc: Run the container
+    internal: true
+    requires:
+      vars: [NAME]
+    cmds:
+      - docker compose -f ./docker/docker-compose.yml up -d
+      - docker exec -it {{.NAME}} bash
+      - docker compose -f ./docker/docker-compose.yml down
