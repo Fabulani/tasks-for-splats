@@ -12,6 +12,7 @@ includes:
   hierarchical-3d-gaussians: 
     taskfile: ./hierarchical-3d-gaussians/Taskfile.yaml
     dir: ./hierarchical-3d-gaussians
+    aliases: [h3dgs]
   3dgsconverter:
     taskfile: ./3dgsconverter/Taskfile.yaml
     dir: ./3dgsconverter
