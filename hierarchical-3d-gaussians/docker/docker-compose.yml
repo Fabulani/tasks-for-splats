@@ -1,11 +1,8 @@
+name: research-hierarchical-3d-gaussians
 services:
-    hierarchical_3d_gaussians:
-        container_name: hierarchical_3d_gaussians
-        # !IMPORTANT! Use `image` if pulling from ghcr. Use `build` if building locally!
-        image: ghcr.io/fabulani/hierarchical-3d-gaussians:latest
-        # build:
-        #     context: .
-        #     dockerfile: Dockerfile
+    hierarchical-3d-gaussians:
+        container_name: hierarchical-3d-gaussians
+        image: ghcr.io/fabulani/hierarchical-3d-gaussians:1.0
         stdin_open: true
         tty: true
         deploy:

@@ -1,32 +1,62 @@
-version: '3'
+version: "3"
+
+includes:
+  common:
+    taskfile: ../templates/Taskfile.common.yaml
+    dir: ./
+    internal: true
 
 vars:
-  TAG: ghcr.io/fabulani/hierarchical-3d-gaussians:latest
+  # - docker image
+  NAME: hierarchical-3d-gaussians
+  VERSION_TAG: "1.0"
+  REPOSITORIES:
+    - ghcr.io/fabulani
+  TAGS: # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
+    sh: |
+      for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
+        echo -n "$repo/{{ .NAME }}:{{ .VERSION_TAG }} "
+      done
+
+  # - docker build
+  BUILD_ARGS:
+    ref: |
+      dict
+      "TORCH_CUDA_ARCH_LIST" "\"7.5+PTX\""
+
+  # - cloning
+  REPO: https://github.com/graphdeco-inria/hierarchical-3d-gaussians.git
   REPO_PATH: ./repo
+  COMMIT_ID: 85777b1
 
 tasks:
+  default:
+    cmd: task --list
+
   clone:
-    desc: Clone hierarchical-3d-gaussians
-    vars:
-      REPO: https://github.com/graphdeco-inria/hierarchical-3d-gaussians.git
-    cmds: 
-      - git clone {{.REPO}} {{.REPO_PATH}} --recursive
+    desc: Clone {{.NAME}} and checkout {{.COMMIT_ID}}
+    cmds:
+      - task: common:clone
       - cp docker/run_all.sh {{.REPO_PATH}}
       - cp docker/run_skip_colmap.sh {{.REPO_PATH}}
       - cp docker/entrypoint.sh {{.REPO_PATH}}
 
   build:
-    desc: Build hierarchical-3d-gaussians image
-    cmd: docker build -f docker/Dockerfile -t {{.TAG}} docker/
+    desc: Build and tag image {{ .NAME }}:{{ .VERSION_TAG }}
+    cmds:
+      - task: common:build
 
   push:
-    desc: Push hierarchical-3d-gaussians image to Github Container Registry
-    cmd: docker push {{.TAG}}
+    desc: Push image to registries {{.REPOSITORIES}}
+    cmds:
+      - task: common:push
 
   pull:
-    desc: Pull hierarchical-3d-gaussians image from Github Container Registry
-    cmd: docker pull {{.TAG}}
+    desc: Pull image from registries {{.REPOSITORIES}}
+    cmds:
+      - task: common:pull
 
   run:
-    desc: Run hierarchical-3d-gaussians container
-    cmd: docker compose -f docker/docker-compose.yml up -d && docker exec -it hierarchical_3d_gaussians bash
+    desc: Run {{.NAME}}
+    cmds:
+      - task: common:run
