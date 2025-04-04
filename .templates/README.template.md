@@ -1,4 +1,4 @@
-# gsplat
+# PROJECT_NAME
 
 Website: [PROJECT_NAME](PROJECT_LINK)
 
