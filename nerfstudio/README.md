@@ -1,0 +1,50 @@
+# Nerfstudio
+
+Website: [Nerfstudio](https://docs.nerf.studio/index.html)
+
+From their page:
+
+> Nerfstudio provides a simple API that allows for a simplified end-to-end process of creating, training, and testing NeRFs. The library supports a more interpretable implementation of NeRFs by modularizing each component. With more modular NeRFs, we hope to create a more user-friendly experience in exploring the technology.
+
+## Dataset
+
+Nerfstudio supports a variety of input types that can be converted to the nerfstudio format. See [Using custom data](https://docs.nerf.studio/quickstart/custom_dataset.html) for instructions.
+
+For quick reference, this is the general command:
+
+```sh
+ns-process-data {video,images,polycam,record3d} --data {DATA_PATH} --output-dir {PROCESSED_DATA_DIR}
+```
+
+where:
+
+- `{video,images,polycam,record3d}` is the data type. Pick one.
+- `--data {DATA_PATH}` is the path to the data. E.g., for images, should be inside `data/YOUR_DATASET_NAME/images` or similar.
+- `--output-dir {PROCESSED_DATA_DIR}` is the output directory where the nerfstudio format dataset will be stored. This README assumes `data/nerfstudio/outputs/YOUR_DATASET_NAME` is used.
+
+Other important parameters:
+
+- `--num-downscales {int}`: how many times to downscale training images (default: 3), at multiples of 2. E.g., for 1, it'll downscale by 2; for 2, it'll downscale by 4x; and for 3, it'll downscale by 8x.
+
+Run `ns-process-data --help` for a complete list of parameters.
+
+> [!NOTE]
+> Reality Capture has an export option for Nerfstudio transforms format. You can export the `transforms.json` and the sparse point cloud with name `sparse_pc.ply` for use with Nerfstudio, but it'll require manual editing of the image paths: RC writes the absolute path, but Nerfstudio uses relative.
+>
+> Each frame in `transforms.json` should have their `file_path` like so: `"file_path": "images/00000.png"`. Use Search and Replace All for a quick fix.
+
+## Usage
+
+Nerfstudio has a collection of methods. In this container, the following methods are ready-to-use:
+
+- Feature Splatting
+
+Other methods can be easily added to the container by following their respective install instructions from the Nerfstudio documentation.
+
+### Feature Splatting
+
+From [Nerfstudio docs](https://docs.nerf.studio/nerfology/methods/feature_splatting.html):
+
+> Feature splatting distills CLIP features into 3DGS by view-independent rasterization, which allows open-vocabulary 2D segmentation and open-vocabulary 3D segmentation of Gaussians directly in the 3D space. This implementation supports simple editing applications by directly manipulating Gaussians.
+
+For further details, see the [Nerfstudio Feature Splatting documentation](https://docs.nerf.studio/nerfology/methods/feature_splatting.html).
