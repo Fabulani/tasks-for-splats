@@ -10,7 +10,7 @@ Install [Tasks](https://taskfile.dev/installation/) and [Docker](https://docs.do
 
 ## Setup
 
-Create a `.env` file in the project root and add the path to your datasets folder, e.g.:
+Duplicate/rename `.env.example` to `.env`, and add the path to your datasets folder, e.g.:
 
 ```txt
 DATA_PATH="//c/path/to/datasets"
