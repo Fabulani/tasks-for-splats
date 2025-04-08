@@ -1,31 +1,53 @@
-version: '3'
+version: "3"
+
+includes:
+  common:
+    taskfile: ../.templates/Taskfile.common.yaml
+    dir: ./
+    internal: true
 
 vars:
-  TAG: ghcr.io/fabulani/3dgsconverter:latest
+  # - docker image
+  NAME: 3dgsconverter
+  VERSION_TAG: 0.2
+  REPOSITORIES:
+    - ghcr.io/fabulani
+  TAGS:
+    sh: |
+      for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
+        echo "$repo/{{ .NAME }}:{{ .VERSION_TAG }}"
+      done
+
+  # - cloning
+  REPO: https://github.com/francescofugazzi/3dgsconverter.git
   REPO_PATH: ./repo
+  COMMIT_ID: 37dc41e
 
 tasks:
+  default:
+    cmd: task --list
+
   clone:
-    desc: Clone 3dgsconverter
-    vars:
-      REPO: https://github.com/francescofugazzi/3dgsconverter.git
-    cmds: 
-      - git clone {{.REPO}} {{.REPO_PATH}} --recursive
+    desc: Clone {{.NAME}} and checkout {{.COMMIT_ID}}
+    cmds:
+      - task: common:clone
 
   build:
-    desc: Build 3dgsconverter image
-    cmd: docker build -f docker/Dockerfile -t {{.TAG}} docker/
+    desc: Build and tag image {{ .NAME }}:{{ .VERSION_TAG }}
+    cmds:
+      - task: common:build
 
   push:
-    desc: Push 3dgsconverter image to Github Container Registry
+    desc: Push image to registries {{.REPOSITORIES}}
     cmds:
-      - docker push {{.TAG}}
+      - task: common:push
 
   pull:
-    desc: Pull 3dgsconverter image from Github Container Registry
+    desc: Pull image from registries {{.REPOSITORIES}}
     cmds:
-      - docker pull {{.TAG}}
+      - task: common:pull
 
   run:
-    desc: Run 3dgsconverter image
-    cmd: docker compose -f docker/docker-compose.yml up -d && docker exec -it 3dgsconverter bash
+    desc: Run {{.NAME}}
+    cmds:
+      - task: common:run

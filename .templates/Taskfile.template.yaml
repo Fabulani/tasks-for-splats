@@ -8,27 +8,27 @@ includes:
 
 vars:
   # - docker image
-  NAME: nerfstudio-gsplat
-  VERSION_TAG: 1.4.0
-  REPOSITORIES:
-    - ghcr.io/fabulani
+  NAME: # Image name
+  VERSION_TAG: # Image version tag
+  REPOSITORIES: # Repositories to push/pull
+    -
   TAGS: # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
     sh: |
       for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
-        echo -n "$repo/{{ .NAME }}:{{ .VERSION_TAG }} "
+        echo "$repo/{{ .NAME }}:{{ .VERSION_TAG }}"
       done
 
   # - docker build
-  BUILD_ARGS:
+  BUILD_ARGS: # Optional build arguments for docker build
     ref: |
       dict
-      "TORCH_CUDA_ARCH_LIST" "\"7.5+PTX\""
-      "MAX_JOBS" "8"
+      "ARG1" "VALUE1"
+      "ARG2" "VALUE2"
 
   # - cloning
-  REPO: https://github.com/nerfstudio-project/gsplat.git
-  REPO_PATH: ./repo
-  COMMIT_ID: e86f392
+  REPO: # Repository URL to clone
+  REPO_PATH: # Output path for cloning. Recommended: ./repo
+  COMMIT_ID: # Commit ID to checkout after cloning
 
 tasks:
   default:
@@ -38,7 +38,6 @@ tasks:
     desc: Clone {{.NAME}} and checkout {{.COMMIT_ID}}
     cmds:
       - task: common:clone
-      - cp docker/requirements.txt {{.REPO_PATH}}/examples/requirements.txt
 
   build:
     desc: Build and tag image {{ .NAME }}:{{ .VERSION_TAG }}

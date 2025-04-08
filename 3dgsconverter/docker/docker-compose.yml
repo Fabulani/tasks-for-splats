@@ -4,8 +4,8 @@ services:
     container_name: 3dgsconverter
     stdin_open: true
     tty: true 
-    image: ghcr.io/fabulani/3dgsconverter:latest
+    image: ghcr.io/fabulani/3dgsconverter:0.2
     pull_policy: never
-    volumes:  # Change to named volumes for production!
+    volumes:  
       - ${DATA_PATH}:/workspace/3dgsconverter/data
     command: ["bash"]
