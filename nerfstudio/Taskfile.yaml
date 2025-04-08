@@ -8,10 +8,10 @@ includes:
 
 vars:
   # - docker image
-  NAME: # Image name
-  VERSION_TAG: # Image version tag
-  REPOSITORIES: # Repositories to push/pull
-    -
+  NAME: nerfstudio
+  VERSION_TAG: "1.1.5"
+  REPOSITORIES:
+    - ghcr.io/fabulani
   TAGS: # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
     sh: |
       for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
@@ -19,16 +19,15 @@ vars:
       done
 
   # - docker build
-  BUILD_ARGS: # Optional build arguments for docker build
+  BUILD_ARGS:
     ref: |
       dict
-      "ARG1" "VALUE1"
-      "ARG2" "VALUE2"
-
+      "TORCH_CUDA_ARCH_LIST" "\"7.5+PTX\""
+  
   # - cloning
-  REPO: # Repository URL to clone
-  REPO_PATH: # Output path for cloning. Recommended: ./repo
-  COMMIT_ID: # Commit ID to checkout after cloning
+  REPO: https://github.com/nerfstudio-project/nerfstudio.git
+  REPO_PATH: ./repo
+  COMMIT_ID: 54b127f
 
 tasks:
   default:
