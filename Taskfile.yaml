@@ -6,9 +6,6 @@ includes:
   gsplat:
     taskfile: ./gsplat/Taskfile.yaml
     dir: ./gsplat
-    vars:
-      TORCH_CUDA_ARCH_LIST: "7.5+PTX"
-      MAX_JOBS: 10
   hierarchical-3d-gaussians:
     taskfile: ./hierarchical-3d-gaussians/Taskfile.yaml
     dir: ./hierarchical-3d-gaussians
@@ -16,6 +13,10 @@ includes:
   3dgsconverter:
     taskfile: ./3dgsconverter/Taskfile.yaml
     dir: ./3dgsconverter
+  nerfstudio:
+    taskfile: ./nerfstudio/Taskfile.yaml
+    dir: ./nerfstudio
+    aliases: [ns]
 
 tasks:
   default:
@@ -27,6 +28,7 @@ tasks:
       - task: gsplat:clone
       - task: hierarchical-3d-gaussians:clone
       - task: 3dgsconverter:clone
+      - task: nerfstudio:clone
 
   build-all:
     desc: Build all Docker images
@@ -34,6 +36,7 @@ tasks:
       - task: gsplat:build
       - task: hierarchical-3d-gaussians:build
       - task: 3dgsconverter:build
+      - task: nerfstudio:build
 
   push-all:
     desc: Push to Github Container Registry
@@ -41,6 +44,7 @@ tasks:
       - task: gsplat:push
       - task: hierarchical-3d-gaussians:push
       - task: 3dgsconverter:push
+      - task: nerfstudio:push
 
   pull-all:
     desc: Pull all images from Github Container Registry
@@ -48,3 +52,4 @@ tasks:
       - task: gsplat:pull
       - task: hierarchical-3d-gauss:pull
       - task: 3dgsconverter:pull
+      - task: nerfstudio:pull
