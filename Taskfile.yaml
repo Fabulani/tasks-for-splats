@@ -17,6 +17,10 @@ includes:
     taskfile: ./nerfstudio/Taskfile.yaml
     dir: ./nerfstudio
     aliases: [ns]
+  spatiallm:
+    taskfile: ./spatiallm/Taskfile.yaml
+    dir: ./spatiallm
+    aliases: [slm]
 
 tasks:
   default:
@@ -29,6 +33,7 @@ tasks:
       - task: hierarchical-3d-gaussians:clone
       - task: 3dgsconverter:clone
       - task: nerfstudio:clone
+      - task: spatiallm:clone
 
   build-all:
     desc: Build all Docker images
@@ -37,6 +42,7 @@ tasks:
       - task: hierarchical-3d-gaussians:build
       - task: 3dgsconverter:build
       - task: nerfstudio:build
+      - task: spatiallm:build
 
   push-all:
     desc: Push to Github Container Registry
@@ -45,6 +51,7 @@ tasks:
       - task: hierarchical-3d-gaussians:push
       - task: 3dgsconverter:push
       - task: nerfstudio:push
+      - task: spatiallm:push
 
   pull-all:
     desc: Pull all images from Github Container Registry
@@ -53,3 +60,4 @@ tasks:
       - task: hierarchical-3d-gauss:pull
       - task: 3dgsconverter:pull
       - task: nerfstudio:pull
+      - task: spatiallm:pull

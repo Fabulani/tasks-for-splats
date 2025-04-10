@@ -1,0 +1,60 @@
+version: "3"
+
+includes:
+  common:
+    taskfile: ../.templates/Taskfile.common.yaml
+    dir: ./
+    internal: true
+
+vars:
+  # - docker image
+  NAME: spatiallm 
+  VERSION_TAG: "1.0" 
+  REPOSITORIES: 
+    - ghcr.io/fabulani
+  TAGS: # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
+    sh: |
+      for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
+        echo "$repo/{{ .NAME }}:{{ .VERSION_TAG }}"
+      done
+
+  # - cloning
+  REPO: https://github.com/manycore-research/SpatialLM.git
+  REPO_PATH: ./repo 
+  COMMIT_ID: d52a6a5
+
+  # - docker build
+  BUILD_ARGS: 
+    ref: |
+      dict
+      "TORCH_CUDA_ARCH_LIST" "\"7.5+PTX\""
+      "COMMIT_ID" "d52a6a5"
+
+tasks:
+  default:
+    cmd: task --list
+
+  clone:
+    desc: Clone {{.NAME}} and checkout {{.COMMIT_ID}}
+    cmds:
+      - task: common:clone
+
+  build:
+    desc: Build and tag image {{ .NAME }}:{{ .VERSION_TAG }}
+    cmds:
+      - task: common:build
+
+  push:
+    desc: Push image to registries {{.REPOSITORIES}}
+    cmds:
+      - task: common:push
+
+  pull:
+    desc: Pull image from registries {{.REPOSITORIES}}
+    cmds:
+      - task: common:pull
+
+  run:
+    desc: Run {{.NAME}}
+    cmds:
+      - task: common:run
