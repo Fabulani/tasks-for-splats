@@ -48,7 +48,7 @@ task clone-all
 Adding new projects follows this workflow:
 
 0. Create and checkout a new branch.
-1. Create a folder for the project. Project folders usually contain the following:
+1. Create a folder for the project using the template `.templates/project`. Project folders usually contain the following:
 
    ```txt
    project_name/
@@ -59,7 +59,7 @@ Adding new projects follows this workflow:
    └── Taskfile.yaml
    ```
 
-2. Copy needed templates from the `./.templates` folder (e.g., `Taskfile.template.yaml`, `README.template.md`, and `docker-compose.template.yml`). Rename and customize them as needed.
-3. Add Dockerfile and other necessary files to the `docker` folder.
+2. Rename and edit the template files.
+3. Additional files needed for the container go inside the project `docker` folder.
 4. Check that all tasks from the new project work.
 5. Open a PR and wait for the merge!
