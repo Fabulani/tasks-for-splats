@@ -31,13 +31,15 @@ Convert layout file to Rerun format:
 python visualize.py --point_cloud data/YOUR_PCD.ply --layout data/YOUR_PCD.txt --save YOUR_PCD.rrd
 ```
 
-Finally, visualize using Rerun:
+Open Rerun web viewer to visualize the results:
 
 ```sh
-rerun --web-viewer data/YOUR_PCD.rrd
+rerun --web-viewer
 ```
 
-The `rerun` instance is available at <localhost:9876>.
+Access it at <http://localhost:9090>. Click on the icon at the top-left, then `Open`, or just `CTRL+O`, and select your `.rrd` file.
+
+Check the [Rerun docs](https://rerun.io/docs/getting-started/what-is-rerun) for instructions on how to use the viewer.
 
 ---
 
