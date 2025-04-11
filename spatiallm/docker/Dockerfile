@@ -40,3 +40,6 @@ RUN poetry config installer.max-workers 4 \
 
 # Fix for torchsparse installation. See https://github.com/manycore-research/SpatialLM/issues/10#issuecomment-2754357404
 RUN FORCE_CUDA=1 pip install git+https://github.com/mit-han-lab/torchsparse.git@385f5ce
+
+# Disable anonymous telemetry from Rerun
+RUN rerun analytics disable
