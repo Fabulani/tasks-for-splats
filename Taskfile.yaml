@@ -21,6 +21,20 @@ includes:
     taskfile: ./spatiallm/Taskfile.yaml
     dir: ./spatiallm
     aliases: [slm]
+  supersplat:
+    taskfile: ./supersplat/Taskfile.yaml
+    dir: ./supersplat
+    aliases: [ss]
+
+vars:
+  PROJECTS:
+    - gsplat
+    - hierarchical-3d-gaussians
+    - 3dgsconverter
+    - nerfstudio
+    - spatiallm
+    - supersplat
+
 
 tasks:
   default:
@@ -29,35 +43,23 @@ tasks:
   clone-all:
     desc: Clone all repositories
     cmds:
-      - task: gsplat:clone
-      - task: hierarchical-3d-gaussians:clone
-      - task: 3dgsconverter:clone
-      - task: nerfstudio:clone
-      - task: spatiallm:clone
+      - for: { var: PROJECTS, as: PROJ }
+        cmd: task {{ .PROJ }}:clone
 
   build-all:
     desc: Build all Docker images
     cmds:
-      - task: gsplat:build
-      - task: hierarchical-3d-gaussians:build
-      - task: 3dgsconverter:build
-      - task: nerfstudio:build
-      - task: spatiallm:build
+      - for: { var: PROJECTS, as: PROJ }
+        cmd: task {{ .PROJ }}:build
 
   push-all:
     desc: Push to Github Container Registry
     cmds:
-      - task: gsplat:push
-      - task: hierarchical-3d-gaussians:push
-      - task: 3dgsconverter:push
-      - task: nerfstudio:push
-      - task: spatiallm:push
+      - for: { var: PROJECTS, as: PROJ }
+        cmd: task {{ .PROJ }}:push
 
   pull-all:
     desc: Pull all images from Github Container Registry
     cmds:
-      - task: gsplat:pull
-      - task: hierarchical-3d-gauss:pull
-      - task: 3dgsconverter:pull
-      - task: nerfstudio:pull
-      - task: spatiallm:pull
+      - for: { var: PROJECTS, as: PROJ }
+        cmd: task {{ .PROJ }}:pull
