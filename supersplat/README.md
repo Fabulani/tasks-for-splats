@@ -1,4 +1,4 @@
-# Supersplat Viewer
+# SuperSplat - 3D Gaussian Splat Editor
 
 Website: [Supersplat](https://github.com/playcanvas/supersplat)
 
