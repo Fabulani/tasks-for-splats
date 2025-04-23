@@ -29,10 +29,19 @@ RUN git clone https://github.com/facebookresearch/dinov2.git facebookresearch_di
     cd facebookresearch_dinov2_main && \
     git checkout e1277af
 RUN mkdir /root/.cache/torch/hub/checkpoints && \
-    wget -O /root/.cache/torch/hub/checkpoints/dinov2_vits14_pretrain.pth https://dl.fbaipublicfiles.com/dinov2/dinov2_vits14/dinov2_vits14_pretrain.pth
+    wget -O /root/.cache/torch/hub/checkpoints/dinov2_vits14_pretrain.pth \ 
+    https://dl.fbaipublicfiles.com/dinov2/dinov2_vits14/dinov2_vits14_pretrain.pth
 
 # Download CLIP model
 RUN mkdir /root/.torch_hub && \
-    wget -O /root/.torch_hub/ViT-L-14-336px.pt https://openaipublic.azureedge.net/clip/models/3035c92b350959924f9f00213499208652fc7ea050643e8b385c2dac08641f02/ViT-L-14-336px.pt
+    wget -O /root/.torch_hub/ViT-L-14-336px.pt \ 
+    https://openaipublic.azureedge.net/clip/models/3035c92b350959924f9f00213499208652fc7ea050643e8b385c2dac08641f02/ViT-L-14-336px.pt
+
+# Download AlexNet
+RUN wget -O /root/.cache/torch/hub/checkpoints/alexnet-owt-7be5be79.pth \
+    https://download.pytorch.org/models/alexnet-owt-7be5be79.pth
+
+# Fix for ns-export gaussian-splat: https://github.com/nerfstudio-project/nerfstudio/issues/3483#issuecomment-2430423841
+RUN pip uninstall -y pymeshlab && pip install --no-cache-dir pymeshlab==2023.12.post1
 
 WORKDIR /workspace

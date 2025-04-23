@@ -47,6 +47,8 @@ From [Nerfstudio docs](https://docs.nerf.studio/nerfology/methods/feature_splatt
 
 > Feature splatting distills CLIP features into 3DGS by view-independent rasterization, which allows open-vocabulary 2D segmentation and open-vocabulary 3D segmentation of Gaussians directly in the 3D space. This implementation supports simple editing applications by directly manipulating Gaussians.
 
+#### Train
+
 Run training with:
 
 ```sh
@@ -62,8 +64,12 @@ where:
 Other useful parameters:
 
 - `--pipeline.datamanager.images-on-gpu True`: may speed up processing at a higher gpu memory cost.
+- `--save-only-latest-checkpoint`: default `True`, set to `False` to save checkpoints in intervals.
+- `--steps-per-save`: interval for saving checkpoints.
 
 Run `ns-train feature-splatting --help` to see all available parameters.
+
+#### Viewer
 
 Once training is finished, you can load the checkpoint for the viewer with:
 
@@ -72,6 +78,21 @@ ns-viewer --load-config {OUTPUT_DIR}/feature-splatting/{TIMESTAMP}/config.yml
 ```
 
 Run `ns-viewer --helper` to see all available parameters
+
+#### Export to PLY
+
+Export the trained model to `.ply` with:
+
+```sh
+ns-export gaussian-splat --load-config {OUTPUT_DIR}/feature-splatting/{TIMESTAMP}/config.yml --output-dir {PLY_OUTPUT_DIR}
+```
+
+where:
+
+- `--load-config`: path to the config YAML file.
+- `--output-dir`: path to the output directory.
+
+Use `--output-filename` to change the output file name (default: `splat.ply`).
 
 ---
 
