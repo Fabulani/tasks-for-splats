@@ -1,0 +1,17 @@
+name: research-supersplat
+services:
+  PROJECT_NAME:
+    container_name: supersplat  # Must be same as defined in Taskfile
+    image: supersplat:2.5.0  # Must be same as defined in Taskfile
+    pull_policy: never
+    ports:
+      - "3000:3000"  # Change to needed ports
+    ipc: host
+    command: ["npm", "run", "develop"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
