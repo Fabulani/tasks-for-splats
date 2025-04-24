@@ -11,7 +11,7 @@ vars:
   NAME: # Image name
   VERSION_TAG: # Image version tag
   REPOSITORIES: # Repositories to push/pull
-    -
+    - ghcr.io/fabulani
   TAGS: # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
     sh: |
       for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
@@ -27,7 +27,7 @@ vars:
 
   # - cloning
   REPO: # Repository URL to clone
-  REPO_PATH: # Output path for cloning. Recommended: ./repo
+  REPO_PATH: ./repo # Output path for cloning. Recommended: ./repo
   COMMIT_ID: # Commit ID to checkout after cloning
 
 tasks:
