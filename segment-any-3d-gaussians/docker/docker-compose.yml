@@ -1,0 +1,21 @@
+name: research-segment-any-3d-gaussians
+services:
+  PROJECT_NAME:
+    container_name: segment-any-3d-gaussians  # Must be same as defined in Taskfile
+    stdin_open: true
+    tty: true 
+    image: segment-any-3d-gaussians:1.0.0  # Must be same as defined in Taskfile
+    pull_policy: never
+    volumes:  
+      - ${DATA_PATH}:/workspace/SegAnyGAussians/data  # Usually /workspace/data or /workspace/PROJECT_NAME/data
+    ports:
+      - "8080:8080"  # Change to needed ports
+    ipc: host
+    command: ["bash"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

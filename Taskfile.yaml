@@ -25,6 +25,12 @@ includes:
     taskfile: ./supersplat/Taskfile.yaml
     dir: ./supersplat
     aliases: [ss]
+  segment-any-3d-gaussians:
+    taskfile: ./segment-any-3d-gaussians/Taskfile.yaml
+    dir: ./segment-any-3d-gaussians
+    aliases: [saga]
+
+
 
 vars:
   PROJECTS:
@@ -34,6 +40,7 @@ vars:
     - nerfstudio
     - spatiallm
     - supersplat
+    - segment-any-3d-gaussians
 
 
 tasks:
