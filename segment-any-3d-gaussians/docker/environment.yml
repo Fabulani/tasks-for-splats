@@ -1,0 +1,23 @@
+name: seg-any-gaussians
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+
+dependencies:
+  - python=3.9
+  - pip
+  - cudatoolkit=11.3
+  - pytorch=1.12.1
+  - torchvision
+  - numpy
+  - scipy
+  - matplotlib
+  - imageio
+  - scikit-image
+  - plyfile
+  - tqdm
+  - pandas
+  - pyyaml
+  - setuptools
+  - wheel

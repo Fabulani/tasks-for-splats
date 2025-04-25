@@ -28,10 +28,30 @@ WORKDIR /workspace/SegAnyGAussians
 
 ENV CONDA_ALWAYS_YES=true
 
-# Fix for conda env hanging up due to missing Pytorch3D repository
-# Issue: https://github.com/Jumpat/SegAnyGAussians/issues/5#issuecomment-1972428432
+# # Fix for this issue: https://github.com/Jumpat/SegAnyGAussians/issues/5#issuecomment-1972428432
 RUN conda install https://anaconda.org/pytorch3d/pytorch3d/0.7.4/download/linux-64/pytorch3d-0.7.4-py39_cu113_pyt1121.tar.bz2
 
-RUN conda env create --file environment.yml && \
-    conda activate gaussian_splatting
+#! Hanged for 10k seconds resolving environment!
+RUN conda env create --file environment.yml 
+    # conda activate gaussian_splatting
+
+
+# Fast clean install using conda
+# COPY environment.yml /tmp/environment.yml
+# RUN conda env create -f /tmp/environment.yml 
+    # conda clean -afy
+
+# # Then install using pip within conda
+# RUN /bin/bash -c "source activate gaussian_splatting && \
+#     pip install \
+#       submodules/diff-gaussian-rasterization \
+#       submodules/diff-gaussian-rasterization-depth \
+#       submodules/diff-gaussian-rasterization_contrastive_f \
+#       submodules/simple-knn \
+#       third_party/segment-anything \
+#       dearpygui \
+#       opencv-python \
+#       open-clip-torch \
+#       joblib==1.1.0 \
+#       --no-cache-dir"
 
