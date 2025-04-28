@@ -1,0 +1,60 @@
+version: "3"
+
+includes:
+  common:
+    taskfile: ../.templates/Taskfile.common.yaml
+    dir: ./
+    internal: true
+
+vars:
+  # - docker image
+  NAME: 3dgs-cd
+  VERSION_TAG: "1.0.0"
+  REPOSITORIES: # Repositories to push/pull
+    - ghcr.io/fabulani
+  TAGS: # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
+    sh: |
+      for repo in {{ range $i, $repo := .REPOSITORIES }}{{ if $i }} {{ end }}"{{ $repo }}"{{ end }}; do
+        echo "$repo/{{ .NAME }}:{{ .VERSION_TAG }}"
+      done
+
+  # - docker build
+  BUILD_ARGS: # Optional build arguments for docker build
+    ref: |
+      dict
+      "CUDA_ARCHITECTURES" "75"
+      "COMMIT_ID" "5ca3726"
+
+  # - cloning
+  REPO: https://github.com/520xyxyzq/3DGS-CD.git
+  REPO_PATH: ./repo
+  COMMIT_ID: 5ca3726
+
+tasks:
+  default:
+    cmd: task --list
+
+  clone:
+    desc: Clone {{.NAME}} and checkout {{.COMMIT_ID}}
+    cmds:
+      - task: common:clone
+
+  build:
+    desc: Build and tag image {{ .NAME }}:{{ .VERSION_TAG }}
+    cmds:
+      - task: common:build
+
+  push:
+    desc: Push image to registries {{.REPOSITORIES}}
+    cmds:
+      - task: common:push
+
+  pull:
+    desc: Pull image from registries {{.REPOSITORIES}}
+    cmds:
+      - task: common:pull
+
+  run:
+    desc: Run {{.NAME}}
+    cmds:
+      - task: common:run
