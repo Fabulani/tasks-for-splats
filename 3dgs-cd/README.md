@@ -1,19 +1,50 @@
-# PROJECT_NAME
+# 3DGS-CD: 3D Gaussian Splatting-based Change Detection for Physical Object Rearrangement
 
-Website: [PROJECT_NAME](PROJECT_LINK)
+Website: [3DGS-CD](https://github.com/520xyxyzq/3DGS-CD/tree/main)
 
 From their page:
 
-> PROJECT DESCRIPTION GOES HERE (EITHER THEIR ABSTRACT OR A SUMMARY).
+> We estimate 3D object-level changes from two sets of unaligned RGB images using 3D Gaussian Splatting as the scene representation, enabling accurate recovery of shapes and pose changes of rearranged objects in cluttered environments within tens of seconds using sparse (as few as one) new images.
 
 ## Dataset
 
-EXPLAIN HOW THE DATASET MUST BE STRUCTURED TO RUN THE PROJECT.
+Each scene must be organized as follows:
+
+```txt
+scene_name
+  - rgb: pre-change images
+  - rgb_new: post-change images
+```
 
 ## Usage
 
-QUICKSTART, TIPS, SPECIFIC INFO ON USING THE PROJECT INSIDE THE CONTAINER.
+There are only two steps:
+
+1. Data Processing
+2. Running the method
+
+### Data Processing
+
+Run the following:
+
+```sh
+./scripts/process_iphone_data.sh ${DATA_PATH} ${NUM_DOWNSCALES} ${NERFSTUDIO_FOLDER}
+```
+
+where:
+
+- `${DATA_PATH}/scene_name`: path to your scene. `DATA_PATH` is already set, so change `scene_name`.
+- `${NUM_DOWNSCALES}`: how much to downscale images. Change this to a number, e.g. `2`.
+- `${NERFSTUDIO_FOLDER}`: path to the nerfstudio folder. Already set.
+
+### Running the method
+
+Run the following:
+
+```sh
+./scripts/real_gsplat_train.sh
+```
 
 ---
 
-For further details, see the [PROJECT_NAME documentation](LINK_TO_DOCUMENTATION_IF_IT_EXISTS).
+For further details, see the [3DGS-CD README](https://github.com/520xyxyzq/3DGS-CD/tree/main?tab=readme-ov-file#instructions).
