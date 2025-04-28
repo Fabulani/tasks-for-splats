@@ -168,12 +168,13 @@ RUN python3.10 -m pip install --no-cache-dir omegaconf
 # ADD . /home/user/nerfstudio
 
 # @fabulani: Intead of copying the folder, we'll git clone it from the repo
-RUN git clone https://github.com/520xyxyzq/3DGS-CD.git@${COMMIT_ID} /home/user/nerfstudio --recursive && \
+ENV NERFSTUDIO_FOLDER=/home/user/nerfstudio
+RUN git clone https://github.com/520xyxyzq/3DGS-CD.git ${NERFSTUDIO_FOLDER} --recursive && \
     cd nerfstudio && \
     git checkout ${COMMIT_ID}
 
 USER root
-RUN chown -R user /home/user/nerfstudio
+RUN chown -R user ${NERFSTUDIO_FOLDER}
 USER ${USER_ID}
 
 # Install nerfstudio dependencies.
