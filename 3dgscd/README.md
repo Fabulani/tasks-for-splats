@@ -28,13 +28,13 @@ There are only two steps:
 Run the following:
 
 ```sh
-./scripts/process_iphone_data.sh ${DATA_PATH} ${NUM_DOWNSCALES} ${NERFSTUDIO_FOLDER}
+./scripts/process_iphone_data.sh data/<scene_name> <num_downscales> ${NERFSTUDIO_FOLDER}
 ```
 
 where:
 
-- `${DATA_PATH}/scene_name`: path to your scene. `DATA_PATH` is already set, so change `scene_name`.
-- `${NUM_DOWNSCALES}`: how much to downscale images. Change this to a number, e.g. `2`.
+- `data/<scene_name>`: path to your scene. Change `<scene_name>`.
+- `<num_downscales>`: how much to downscale images. Change this to a number, e.g. `2`.
 - `${NERFSTUDIO_FOLDER}`: path to the nerfstudio folder. Already set.
 
 ### Running the method

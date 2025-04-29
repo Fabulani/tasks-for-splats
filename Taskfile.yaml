@@ -25,9 +25,9 @@ includes:
     taskfile: ./supersplat/Taskfile.yaml
     dir: ./supersplat
     aliases: [ss]
-  3dgs-cd:
-    taskfile: ./3dgs-cd/Taskfile.yaml
-    dir: ./3dgs-cd
+  3dgscd:
+    taskfile: ./3dgscd/Taskfile.yaml
+    dir: ./3dgscd
 
 vars:
   PROJECTS:
@@ -37,7 +37,7 @@ vars:
     - nerfstudio
     - spatiallm
     - supersplat
-    - 3dgs-cd
+    - 3dgscd
 
 
 tasks:
