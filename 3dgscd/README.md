@@ -16,9 +16,21 @@ scene_name
   - rgb_new: post-change images
 ```
 
+Example datasets from the authors can be downloaded [here](https://drive.google.com/drive/folders/1OPUu643bkbAoryASNMi8_iDJGnypotc0?usp=drive_link). These have been pre-processed: downscaled and undistorted.
+
 ## Usage
 
-There are only two steps:
+For the example datasets from the authors, the following command is enough:
+
+```sh
+python nerfstudio/scripts/change_det.py \
+  --config <data_folder>/<scene_name>/config.yml \
+  --transform <data_folder>/<scene_name>/transforms.json \
+  --output <data_folder>/<scene_name> \
+  --ckpt <data_folder>/<scene_name>/nerfstudio_models/
+```
+
+For custom datasets, there are only two steps:
 
 1. Data Processing
 2. Running the method
@@ -28,12 +40,12 @@ There are only two steps:
 Run the following:
 
 ```sh
-./scripts/process_iphone_data.sh data/<scene_name> <num_downscales> ${NERFSTUDIO_FOLDER}
+./scripts/process_iphone_data.sh <data/scene_name> <num_downscales> ${NERFSTUDIO_FOLDER}
 ```
 
 where:
 
-- `data/<scene_name>`: path to your scene. Change `<scene_name>`.
+- `<data/<scene_name>`: path to your scene.
 - `<num_downscales>`: how much to downscale images. Change this to a number, e.g. `2`.
 - `${NERFSTUDIO_FOLDER}`: path to the nerfstudio folder. Already set.
 
