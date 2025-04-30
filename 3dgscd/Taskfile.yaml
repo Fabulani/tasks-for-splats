@@ -23,6 +23,7 @@ vars:
     ref: |
       dict
       "CUDA_ARCHITECTURES" "75"
+      "TCNN_CUDA_ARCHITECTURES" "75"
       "COMMIT_ID" "5ca3726"
 
   # - cloning
