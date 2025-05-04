@@ -40,22 +40,31 @@ For custom datasets, there are only two steps:
 Run the following:
 
 ```sh
-./scripts/process_iphone_data.sh <data/scene_name> <num_downscales> ${NERFSTUDIO_FOLDER}
+./scripts/process_iphone_data.sh <data_folder/scene_name> <num_downscales> ${NERFSTUDIO_FOLDER}
 ```
 
 where:
 
-- `<data/<scene_name>`: path to your scene.
+- `<data_folder/<scene_name>`: path to your scene.
 - `<num_downscales>`: how much to downscale images. Change this to a number, e.g. `2`.
 - `${NERFSTUDIO_FOLDER}`: path to the nerfstudio folder. Already set.
 
 ### Running the method
 
+> [!WARNING]
+> Not tested! This section is likely to not work with the current image, as it seems to require a conda environment along with COLMAP and nerfstudio.
+
 Run the following:
 
 ```sh
-./scripts/real_gsplat_train.sh
+./scripts/real_gsplat_train.sh <DATA_FOLDER> -0 <TRAIN_IDX> <OUTPUT_FOLDER> ${NERFSTUDIO_FOLDER} /workspace/3dgscd/scripts/merge_colmap_data.py /workspace/3dgscd/scripts/edit_nerf_data.py /workspace/3dgscd/scripts/undistort_transforms.py
 ```
+
+where:
+
+- <DATA_FOLDER>: path to dataset folder.
+- <TRAIN_IDX>: indices of sparse images used for training, e.g. "0 2 4 6".
+- <OUTPUT_FOLDER>: path to output folder, e.g. "/workspace/3dgscd/data/output"
 
 ---
 
