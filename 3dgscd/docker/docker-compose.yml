@@ -1,0 +1,21 @@
+name: research-3dgscd
+services:
+  PROJECT_NAME:
+    container_name: 3dgscd  # Must be same as defined in Taskfile
+    stdin_open: true
+    tty: true 
+    image: 3dgscd:1.0.0  # Must be same as defined in Taskfile
+    pull_policy: never
+    volumes:  
+      - ${DATA_PATH}:/workspace/3dgscd/data  # Usually /workspace/data or /workspace/PROJECT_NAME/data
+    ports:
+      - "8080:8080"  # Change to needed ports
+    ipc: host
+    command: ["bash"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

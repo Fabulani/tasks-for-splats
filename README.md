@@ -4,6 +4,20 @@
 
 This is a multi-project repository focusing on making Gaussian Splatting research repositories easier to set up and use. I use [Tasks](https://taskfile.dev/) and Docker for setting everything up, with Github Container Registry for housing the built images.
 
+Currently, the following projects are available:
+
+| **task**                             | **category**                        | **status** | **note**                                             | **link**                                                                                                                                                  |
+| ------------------------------------ | ----------------------------------- | ---------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `3dgscd`                             | change detection                    | 🚧         | OOM during tests; couldn't test 'running the method' | [3D Gaussian Splatting-based Change Detection for Physical Object Rearrangement](https://github.com/520xyxyzq/3DGS-CD/tree/main)                          |
+| `3dgsconverter`                      | format conversion                   | ✅         |                                                      | [3D Gaussian Splatting Converter](https://github.com/francescofugazzi/3dgsconverter)                                                                      |
+| `gsplat`                             | rasterization                       | ✅         |                                                      | [gsplat: An Open-Source Library for Gaussian Splatting](https://github.com/nerfstudio-project/gsplat)                                                     |
+| `hierarchical-3d-gaussians`, `h3dgs` | hierarchy                           | 🚧         | viewer doesn't work, needs more testing              | [A Hierarchical 3D Gaussian Representation for Real-Time Rendering of Very Large Datasets](https://repo-sam.inria.fr/fungraph/hierarchical-3d-gaussians/) |
+| `nerfstudio`, `ns`                   | library, segmentation, open-vocab   | ✅         | feature-splatting ready for use                      | [Nerfstudio: A collaboration friendly studio for NeRFs](https://docs.nerf.studio/index.html)                                                              |
+| `spatiallm`, `slm`                   | scene understanding, point cloud    | ✅         |                                                      | [SpatialLM: Large Language Model for Spatial Understanding](https://manycore-research.github.io/SpatialLM/)                                               |
+| `supersplat`, `ss`                   | visualization, editing, compression | ✅         |                                                      | [Supersplat: 3D Gaussian Splat Editor](https://github.com/playcanvas/supersplat)                                                                          |
+
+✅: done | 🚧: work-in-progress.
+
 ## Pre-requisites
 
 Install [Tasks](https://taskfile.dev/installation/) and [Docker](https://docs.docker.com/engine/install/).
