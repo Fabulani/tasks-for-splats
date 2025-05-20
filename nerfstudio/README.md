@@ -13,12 +13,12 @@ Nerfstudio supports a variety of input types that can be converted to the nerfst
 For quick reference, this is the general command:
 
 ```sh
-ns-process-data {video,images,polycam,record3d} --data {DATA_PATH} --output-dir {PROCESSED_DATA_DIR}
+ns-process-data {video,images,polycam,record3d,realitycapture} --data {DATA_PATH} --output-dir {PROCESSED_DATA_DIR}
 ```
 
 where:
 
-- `{video,images,polycam,record3d}` is the data type. Pick one.
+- `{video,images,polycam,record3d,realitycapture}` is the data type. Pick one.
 - `--data {DATA_PATH}` is the path to the data. E.g., for images, should be inside `data/YOUR_DATASET_NAME/images` or similar.
 - `--output-dir {PROCESSED_DATA_DIR}` is the output directory where the nerfstudio format dataset will be stored. This README assumes `data/nerfstudio/outputs/YOUR_DATASET_NAME` is used.
 
@@ -32,6 +32,10 @@ Run `ns-process-data --help` for a complete list of parameters.
 > Reality Capture has an export option for Nerfstudio transforms format. You can export the `transforms.json` and the sparse point cloud with name `sparse_pc.ply` for use with Nerfstudio, but it'll require manual editing of the image paths: RC writes the absolute path, but Nerfstudio uses relative.
 >
 > Each frame in `transforms.json` should have their `file_path` like so: `"file_path": "images/00000.png"`. Use Search and Replace All for a quick fix.
+>
+> A better options (that also seems to avoid [error with different image dimensions](https://github.com/nerfstudio-project/nerfstudio/issues/1852)) is to export camera poses as a `.csv` file using the `Internal/External camera parameters` option, alongside with the (sparse) Point Cloud `.ply`. Then, use
+>
+> `ns-process-data realitycapture --csv <csv_path> --data <images_folder or video> --output-dir <output_dir> --ply <ply_path>`.
 
 ## Usage
 
