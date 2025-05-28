@@ -4,7 +4,7 @@ services:
     container_name: nerfstudio-gsplat
     stdin_open: true
     tty: true 
-    image: nerfstudio-gsplat:1.4.0
+    image: nerfstudio-gsplat:1.5.2
     pull_policy: never
     volumes:  # Change to named volumes for production!
       - ${DATA_PATH}:/workspace/gsplat/data

@@ -8,6 +8,9 @@ ENV TORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST}
 ARG MAX_JOBS=10
 ENV MAX_JOBS=${MAX_JOBS}
 
+ARG COMMIT_ID="5b842f0"
+ENV COMMIT_ID=${COMMIT_ID}
+
 WORKDIR /workspace
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -28,11 +31,10 @@ RUN mkdir -p /root/.cache/torch/hub/checkpoints && \
 
 # Clone, install, and compile gsplat and its CUDA scripts
 # Note: commit must be later than ae729d3 - this fixes a cuda compilation error!
-ARG GIT_COMMIT_ID=e86f392
 RUN git clone https://github.com/nerfstudio-project/gsplat.git --recursive && \
     cd gsplat && \
-    git checkout ${GIT_COMMIT_ID}
-RUN pip install --no-cache-dir git+https://github.com/nerfstudio-project/gsplat.git@${GIT_COMMIT_ID}
+    git checkout ${COMMIT_ID}
+RUN pip install --no-cache-dir git+https://github.com/nerfstudio-project/gsplat.git@${COMMIT_ID}
 
 WORKDIR /workspace/gsplat
 

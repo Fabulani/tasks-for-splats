@@ -77,3 +77,12 @@ Adding new projects follows this workflow:
 3. Additional files needed for the container go inside the project `docker` folder.
 4. Check that all tasks from the new project work.
 5. Open a PR and wait for the merge!
+
+### Bumping version to newer commits
+
+As of now, multiple things have to be manually updated for version bumping:
+
+- `docker-compose.yml`: `image` version tag.
+- `Dockerfile`: `COMMIT_ID` ARG.
+- `requirements.txt`: if the project has a custom requirements file (e.g., `gsplat`), always double-check if any new requirements have been added.
+- `Taskfile.yaml`: `VERSION_TAG` and `COMMIT_ID`.

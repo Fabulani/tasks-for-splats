@@ -56,4 +56,6 @@ where:
 - `--result_dir` is the path to the output folder, where gsplat will save checkpoints and other outputs. If you want results to be persistent, save them to the `data` folder, e.g., `data/results/<some-output-folder>`.
 - `--data_factor` is the downscaling factor for images.
 
+---
+
 For further details, see the [gsplat documentation](https://docs.gsplat.studio/main/).

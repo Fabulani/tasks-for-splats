@@ -9,7 +9,7 @@ includes:
 vars:
   # - docker image
   NAME: nerfstudio-gsplat
-  VERSION_TAG: 1.4.0
+  VERSION_TAG: 1.5.2
   REPOSITORIES:
     - ghcr.io/fabulani
   TAGS: # Tags are formed like so: REPO/NAME:VERSION_TAG, for REPO in REPOSITORIES
@@ -28,7 +28,7 @@ vars:
   # - cloning
   REPO: https://github.com/nerfstudio-project/gsplat.git
   REPO_PATH: ./repo
-  COMMIT_ID: e86f392
+  COMMIT_ID: 5b842f0
 
 tasks:
   default:
