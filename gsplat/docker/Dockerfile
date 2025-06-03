@@ -43,3 +43,8 @@ COPY requirements.txt examples/requirements.txt
 
 # Install gsplat examples requirements
 RUN pip install --no-cache-dir -r examples/requirements.txt
+
+# Install PNG compression requirements
+RUN pip install --no-cache-dir cupy-cuda12x && \
+    pip install --no-cache-dir torchpq && \
+    pip install --no-cache-dir git+https://github.com/fraunhoferhhi/PLAS.git
